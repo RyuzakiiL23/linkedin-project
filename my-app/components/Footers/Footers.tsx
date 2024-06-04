@@ -56,7 +56,7 @@ export default function Footers() {
           <h1 className="font-bold text-primary mb-4">Informations</h1>
           <ul>
             {informations.map((information) => (
-              <li key={information.name} className="text-muted-foreground">
+              <li key={information.name} className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2">
                 {information.name}
               </li>
             ))}
@@ -68,7 +68,7 @@ export default function Footers() {
           <h1 className="font-bold text-primary mb-4">Popular Collections</h1>
           <ul>
             {collections.map((collection) => (
-              <li key={collection.name} className="text-muted-foreground">
+              <li key={collection.name} className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2">
                 {collection.name}
               </li>
             ))}
