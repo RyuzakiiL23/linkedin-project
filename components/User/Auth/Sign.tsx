@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,10 +11,68 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import loginAction from "@/lib/auth/loginAction";
-import signUpAction from "@/lib/auth/signUpAction";
+import { use, useEffect, useState } from "react";
 
 export function Sign() {
+  const [registerInfo, setRegisterInfo] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirmation: ""
+  });
+
+  const [loginInfo, setLoginInfo] = useState({
+    email: "",
+    password: ""
+  });
+
+  const onRegister = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/auth/register",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registerInfo),
+        }
+      );
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onLogin = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/auth/login",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginInfo),
+        }
+      );
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Tabs defaultValue="account" className="w-[400px]">
@@ -28,20 +86,30 @@ export function Sign() {
             <CardTitle>Logo</CardTitle>
             <CardDescription>Connect to your account</CardDescription>
           </CardHeader>
-          <form action={loginAction}>
-          <CardContent className="space-y-2">
+          <form onSubmit={onLogin}>
+            <CardContent className="space-y-2">
               <div className="space-y-1">
-                <Label htmlFor="Email">Email</Label>
-                <Input id="Email" type="email" name="email" />
+                <Label htmlFor="loginEmail">Email</Label>
+                <Input
+                  id="loginEmail"
+                  type="email"
+                  name="email"
+                  onChange={e => setLoginInfo({ ...loginInfo, email: e.currentTarget.value })}
+                />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" name="password"/>
+                <Label htmlFor="loginPassword">Password</Label>
+                <Input
+                  id="loginPassword"
+                  type="password"
+                  name="password"
+                  onChange={e => setLoginInfo({ ...loginInfo, password: e.currentTarget.value })}
+                />
               </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit">LogIn</Button>
-          </CardFooter>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit">LogIn</Button>
+            </CardFooter>
           </form>
         </Card>
       </TabsContent>
@@ -52,29 +120,43 @@ export function Sign() {
             <CardDescription>Create your account</CardDescription>
           </CardHeader>
 
-          {/* Sign Up Form */}
-
-          <form action={signUpAction}>
+          <form onSubmit={onRegister}>
             <CardContent className="space-y-2">
               <div className="space-y-1">
                 <Label htmlFor="firstName">First name</Label>
-                <Input id="firstName" type="text" name="firstName" />
+                <Input
+                  id="firstName"
+                  type="text"
+                  name="firstName"
+                  onChange={e => setRegisterInfo({ ...registerInfo, name: e.currentTarget.value })}
+                />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="lastName">Last name</Label>
-                <Input id="lastName" type="text" name="lastName" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="Email">Email</Label>
-                <Input id="Email" type="email" name="email" />
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  onChange={e => setRegisterInfo({ ...registerInfo, email: e.currentTarget.value })}
+                />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password">New password</Label>
-                <Input id="password" type="password" name="password"/>
+                <Input
+                  id="password"
+                  type="password"
+                  name="password"
+                  onChange={e => setRegisterInfo({ ...registerInfo, password: e.currentTarget.value })}
+                />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="passwordConfirmation">Confirm password</Label>
-                <Input id="passwordConfirmation" type="password" name="passwordConfirmatoin"/>
+                <Input
+                  id="passwordConfirmation"
+                  type="password"
+                  name="passwordConfirmation"
+                  onChange={e => setRegisterInfo({ ...registerInfo, passwordConfirmation: e.currentTarget.value })}
+                />
               </div>
             </CardContent>
             <CardFooter>

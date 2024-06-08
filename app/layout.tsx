@@ -3,9 +3,6 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { ThemeProvider } from "./DarkModeProvider";
-import NavBar from "@/components/NavBar/NavBar";
-import Footers from "@/components/Footers/Footers";
-import DeliveryDetails from "@/components/Body/SectoinEnd/DeliveryDetails/DeliveryDetails";
 import StoreProvider from "./StoreProvider";
 
 const fontSans = FontSans({
@@ -39,12 +36,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-screen">
-              <NavBar />
-              {children}
-              <DeliveryDetails />
-            </div>
-            <Footers />
+            {children}
           </ThemeProvider>
         </StoreProvider>
       </body>
