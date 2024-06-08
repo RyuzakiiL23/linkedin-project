@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { MdDelete } from "react-icons/md";
-import { LogOut } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -11,8 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteProduct } from "@/lib/actions/productActions";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function ProductDialog(props: any) {
   return (
@@ -87,13 +84,13 @@ export default function ProductDialog(props: any) {
           </DropdownMenuItem>
         </Link> */}
         <DropdownMenuItem
-          onClick={async () => {
-            const res = await deleteProduct(props.productId);
-            if (res.message === "Product deleted successfully") {
-              props.setDialogOpen(false);
+          // onClick={async () => {
+          //   const res = await deleteProduct(props.productId);
+          //   if (res.message === "Product deleted successfully") {
+          //     props.setDialogOpen(false);
  
-            }
-          }}
+          //   }
+          // }}
           className="  text-red-700 hover:text-red-500 ease-in duration-150 font-bold"
         >
           <MdDelete className="mr-2 h-4 w-4" />

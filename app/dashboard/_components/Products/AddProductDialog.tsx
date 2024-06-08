@@ -28,7 +28,7 @@ export default function AddProductDialog(props: any) {
             <DialogTitle>Add Your Product</DialogTitle>
           </DialogHeader>
           <div className="w-screen">
-            <ImageUploader setOpen={setOpen} />
+            {/* <ImageUploader setOpen={setOpen} /> */}
           </div>
         </DialogContent>
       </Dialog>

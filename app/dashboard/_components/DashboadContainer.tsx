@@ -5,6 +5,7 @@ import { useState } from "react";
 import DashProducts from "./DashProducts";
 import DashCollections from "./DashCollections";
 import CreateCategory from "./Collections/CreateCategory";
+import AddProductDialog from "./Products/AddProductDialog";
 
 export default function DashboadContainer() {
   const [active, setActive] = useState("collections");
@@ -27,7 +28,7 @@ export default function DashboadContainer() {
           Products
         </div>
         <div
-          className={`absolute h-full w-1/2 bg-red-400 duration-300 ease-out z-10`}
+          className={`absolute h-full w-1/2 bg-primary duration-300 ease-out z-10`}
           style={{
             transform: active === "collections" ? "translateX(0%)" : "translateX(100%)",
           }}
@@ -42,6 +43,7 @@ export default function DashboadContainer() {
         ) : (
           <div className="h-full  ">
             <DashProducts/>
+            <AddProductDialog setDialogOpen={setDialogOpen} />
           </div>
         )}
       </div>
