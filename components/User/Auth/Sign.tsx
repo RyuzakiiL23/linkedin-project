@@ -12,39 +12,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { use, useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 
-export function Sign() {
+export function Sign(props: any) {
+  const cookies = new Cookies(null, { path: "/" });
   const [registerInfo, setRegisterInfo] = useState({
     name: "",
     email: "",
     password: "",
-    passwordConfirmation: ""
+    passwordConfirmation: "",
   });
 
   const [loginInfo, setLoginInfo] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
+  console.log(registerInfo);
   const onRegister = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/auth/register",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registerInfo),
-        }
-      );
+      const response = await fetch("http://localhost:8000/api/auth/register", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerInfo),
+      });
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }
-      console.log(data);
+      if (data.access_token) {
+        cookies.set("session", data);
+        props.setDialog(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -53,22 +56,22 @@ export function Sign() {
   const onLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/auth/login",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginInfo),
-        }
-      );
+      const response = await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginInfo),
+      });
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }
-      console.log(data);
+      if (data.access_token) {
+        cookies.set("session", data);
+        props.setDialog(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -94,7 +97,9 @@ export function Sign() {
                   id="loginEmail"
                   type="email"
                   name="email"
-                  onChange={e => setLoginInfo({ ...loginInfo, email: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setLoginInfo({ ...loginInfo, email: e.currentTarget.value })
+                  }
                 />
               </div>
               <div className="space-y-1">
@@ -103,7 +108,12 @@ export function Sign() {
                   id="loginPassword"
                   type="password"
                   name="password"
-                  onChange={e => setLoginInfo({ ...loginInfo, password: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setLoginInfo({
+                      ...loginInfo,
+                      password: e.currentTarget.value,
+                    })
+                  }
                 />
               </div>
             </CardContent>
@@ -128,7 +138,12 @@ export function Sign() {
                   id="firstName"
                   type="text"
                   name="firstName"
-                  onChange={e => setRegisterInfo({ ...registerInfo, name: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setRegisterInfo({
+                      ...registerInfo,
+                      name: e.currentTarget.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-1">
@@ -137,7 +152,12 @@ export function Sign() {
                   id="email"
                   type="email"
                   name="email"
-                  onChange={e => setRegisterInfo({ ...registerInfo, email: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setRegisterInfo({
+                      ...registerInfo,
+                      email: e.currentTarget.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-1">
@@ -146,7 +166,12 @@ export function Sign() {
                   id="password"
                   type="password"
                   name="password"
-                  onChange={e => setRegisterInfo({ ...registerInfo, password: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setRegisterInfo({
+                      ...registerInfo,
+                      password: e.currentTarget.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-1">
@@ -155,7 +180,12 @@ export function Sign() {
                   id="passwordConfirmation"
                   type="password"
                   name="passwordConfirmation"
-                  onChange={e => setRegisterInfo({ ...registerInfo, passwordConfirmation: e.currentTarget.value })}
+                  onChange={(e) =>
+                    setRegisterInfo({
+                      ...registerInfo,
+                      passwordConfirmation: e.currentTarget.value,
+                    })
+                  }
                 />
               </div>
             </CardContent>
