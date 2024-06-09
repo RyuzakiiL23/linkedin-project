@@ -43,53 +43,21 @@ function ImageUploader(props: any) {
   const [categories, setCategories] = useState<any>();
   // const [categoryLength, setCategoryLength] = useState<number>(0);
 
-    const [productDetails, setProductDetails] = useState<ProductDetails>({
+  const [productDetails, setProductDetails] = useState<ProductDetails>({
     name: "",
-    price: '',
+    price: "",
     image: "",
     brand: "",
     condition: "",
     description: "",
   });
 
-  console.log('selectedCategory', selectedCategory)
-  console.log(productDetails)
+  console.log("selectedCategory", selectedCategory);
+  console.log(productDetails);
 
   const handleCategorySelect = (value: React.SetStateAction<string>) => {
     setSelectedCategory(value);
   };
-
-  //Fetching categories
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const data = await getCategories();
-  //       console.log(data);
-  //       if (Array.isArray(data)) {
-  //         setCategories(data);
-  //         setCategoryLength(data.length);
-  //         console.log(data.length);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching categories:", error);
-  //     }
-  //   };
-
-  //   fetchCategories();
-  // }, [categoryLength]);
-
-  // useEffect(() => {
-  //   const storeCategories = async () => {
-  //     const res = await getSpecificCategories(dashState);
-  //     if (res && typeof res === "object" && "message" in res) {
-  //       console.log(res.message);
-  //       setCategories([{}]);
-  //     } else {
-  //       setCategories(res.categories);
-  //     }
-  //   };
-  //   storeCategories();
-  // }, [dashState, dialogOpen]);
 
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -111,19 +79,58 @@ function ImageUploader(props: any) {
     if (fileList && fileList.length > 0) {
       const file = fileList[0];
 
-      // Extract the file extension
-      const fileExtension = file.name.split(".").pop();
-
-      // Change the name of the file to 'principal.<extension>'
-      const renamedFile = new File([file], `principal.${fileExtension}`, {
-        type: file.type,
-      });
-
-      setSelectedFilePrincipal(renamedFile);
+      setSelectedFilePrincipal(file);
     }
   };
 
+  const handleSubmit = async () => {
+  if (!selectedFilePrincipal) {
+    alert('Please select an image to upload');
+    return;
+  }
 
+  const formData = new FormData();
+  formData.append('file', selectedFilePrincipal);
+  formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || '');
+
+  try {
+    // Upload image to Cloudinary
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+    const cloudinaryData = await cloudinaryResponse.json();
+    console.log('Image uploaded to Cloudinary:', cloudinaryData);
+
+    // Send product details along with secure_url to backend
+    const req = {
+      title: productDetails.name,
+      price: typeof productDetails.price === 'string' ? parseFloat(productDetails.price) : productDetails.price,
+      description: productDetails.description,
+      category_id: parseFloat(productDetails.brand),
+      image: cloudinaryData.secure_url, // Use secure_url from Cloudinary response
+    };
+
+    const productResponse = await fetch(`${process.env.baseURL}/api/products`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(req),
+    });
+
+    console.log('Product created:', productResponse.ok);
+    const productData = await productResponse.json();
+    return productData;
+  } catch (error) {
+    console.error('Error creating product:', error);
+  }
+};
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -140,31 +147,7 @@ function ImageUploader(props: any) {
     setProductDetails({ ...productDetails, [name]: value });
   };
 
-
-  const handleSubmit = async () => {
-    const req = {
-      title: productDetails.name,
-      price: typeof (productDetails.price) === 'string' ? parseFloat(productDetails.price ) : productDetails.price,
-      description: productDetails.description,
-      category_id: parseFloat(productDetails.brand)
-    };
-    try {
-      const response = await fetch(`${process.env.baseURL}/api/products`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-           "authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify(req),
-      });
-      console.log('response', response.ok);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  console.log(selectedFilePrincipal)
 
   const handleCancelPrincipal = () => {
     setSelectedFilePrincipal(null);
@@ -262,7 +245,7 @@ function ImageUploader(props: any) {
                       </div>
                       <Image
                         className="h-full w-full rounded object-cover"
-                        src='http://localhost:3000/omar.png'
+                        src="http://localhost:3000/omar.png"
                         alt={`Selected ${index + 1}`}
                         layout="fill"
                         objectFit="cover"
@@ -298,7 +281,7 @@ function ImageUploader(props: any) {
                         </div>
                       ))
                     : null}
-                  <CreateCategory setDialogOpen={setDialogOpen}/>
+                  <CreateCategory setDialogOpen={setDialogOpen} />
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -348,7 +331,7 @@ function ImageUploader(props: any) {
                       className="border p-2 w-full"
                     />
                   </div>
-                  <div>
+                  {/* <div>
                     <Input
                       placeholder="image url"
                       type="text"
@@ -358,7 +341,7 @@ function ImageUploader(props: any) {
                       onChange={handleInputChange}
                       className="border p-2 w-full"
                     />
-                  </div>
+                  </div> */}
                   <div>
                     <Textarea
                       placeholder="Description..."
