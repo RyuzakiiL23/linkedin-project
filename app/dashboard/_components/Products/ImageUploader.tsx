@@ -18,22 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ICategoryDocument } from "@/models/categoryModels";
-import { set } from "mongoose";
 import { ColumnSpacingIcon } from "@radix-ui/react-icons";
-import { getCategories, getSpecificCategories } from "@/lib/actions/categoryActions";
-import CreateCategory from "./category/CreateCategory";
-import { createProduct } from "@/lib/actions/productActions";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import Image from "next/image";
+import CreateCategory from "../Collections/CreateCategory";
 
 interface ProductDetails {
   name: string;
-  price: string;
-  discount: string;
+  price: number | string;
+  image: string;
   brand: string;
   condition: string;
   description: string;
@@ -41,13 +36,24 @@ interface ProductDetails {
 
 function ImageUploader(props: any) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const dashState = useSelector((state: RootState) => state.dash.value);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedFilePrincipal, setSelectedFilePrincipal] =
     useState<File | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState<any>();
   // const [categoryLength, setCategoryLength] = useState<number>(0);
+
+    const [productDetails, setProductDetails] = useState<ProductDetails>({
+    name: "",
+    price: '',
+    image: "",
+    brand: "",
+    condition: "",
+    description: "",
+  });
+
+  console.log('selectedCategory', selectedCategory)
+  console.log(productDetails)
 
   const handleCategorySelect = (value: React.SetStateAction<string>) => {
     setSelectedCategory(value);
@@ -72,18 +78,18 @@ function ImageUploader(props: any) {
   //   fetchCategories();
   // }, [categoryLength]);
 
-  useEffect(() => {
-    const storeCategories = async () => {
-      const res = await getSpecificCategories(dashState);
-      if (res && typeof res === "object" && "message" in res) {
-        console.log(res.message);
-        setCategories([{}]);
-      } else {
-        setCategories(res.categories);
-      }
-    };
-    storeCategories();
-  }, [dashState, dialogOpen]);
+  // useEffect(() => {
+  //   const storeCategories = async () => {
+  //     const res = await getSpecificCategories(dashState);
+  //     if (res && typeof res === "object" && "message" in res) {
+  //       console.log(res.message);
+  //       setCategories([{}]);
+  //     } else {
+  //       setCategories(res.categories);
+  //     }
+  //   };
+  //   storeCategories();
+  // }, [dashState, dialogOpen]);
 
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -117,14 +123,7 @@ function ImageUploader(props: any) {
     }
   };
 
-  const [productDetails, setProductDetails] = useState<ProductDetails>({
-    name: "",
-    price: "",
-    discount: "",
-    brand: "",
-    condition: "",
-    description: "",
-  });
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -143,44 +142,28 @@ function ImageUploader(props: any) {
 
 
   const handleSubmit = async () => {
-    const formData = new FormData();
-    formData.append("store", dashState);
-    formData.append("price", productDetails.price);
-    formData.append("name", productDetails.name);
-    formData.append("discount", productDetails.discount);
-    formData.append("brand", productDetails.brand);
-    formData.append("condition", productDetails.condition);
-    formData.append("description", productDetails.description);
-    formData.append("category", selectedCategory);
-
-    // Append the principal image
-    if (selectedFilePrincipal) {
-      formData.append("imageFiles", selectedFilePrincipal);
-    }
-
-    // Append additional images
-    selectedFiles.forEach((file, index) => {
-      if (file) {
-        formData.append(`imageFiles`, file);
-      }
-    });
-
-    console.log("products", productDetails);
+    const req = {
+      title: productDetails.name,
+      price: typeof (productDetails.price) === 'string' ? parseFloat(productDetails.price ) : productDetails.price,
+      description: productDetails.description,
+      category_id: parseFloat(productDetails.brand)
+    };
     try {
-      const response = await createProduct(formData);
-
-      if (response.message === "Product created successfully") {
-        console.log("Product details and images uploaded successfully!");
-        props.setOpen(false);
-        // Clear form fields or perform any other necessary actions upon successful upload
-      } else {
-        console.error("Failed to upload product details and images.");
-      }
+      const response = await fetch(`${process.env.baseURL}/api/products`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+           "authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(req),
+      });
+      console.log('response', response.ok);
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error("Error occurred while uploading:", error);
+      console.log(error);
     }
-
-    // window.location.href = '/admin';
   };
 
   const handleCancelPrincipal = () => {
@@ -221,7 +204,7 @@ function ImageUploader(props: any) {
                 <div className="relative h-full w-full">
                   <p
                     onClick={handleCancelPrincipal}
-                    className="absolute bottom-0 text-red-600 ml-5 hover:cursor-pointer"
+                    className="absolute bottom-5 text-red-600 ml-5 hover:cursor-pointer z-50"
                   >
                     <FaRegTrashCan style={{ fontSize: "28px" }} />
                   </p>
@@ -279,7 +262,7 @@ function ImageUploader(props: any) {
                       </div>
                       <Image
                         className="h-full w-full rounded object-cover"
-                        src={URL.createObjectURL(file)}
+                        src='http://localhost:3000/omar.png'
                         alt={`Selected ${index + 1}`}
                         layout="fill"
                         objectFit="cover"
@@ -303,7 +286,7 @@ function ImageUploader(props: any) {
               <SelectContent>
                 <SelectGroup>
                   {categories
-                    ? categories.map((category: ICategoryDocument) => (
+                    ? categories.map((category: any) => (
                         <div key={category._id as string}>
                           <SelectItem
                             className="cursor-pointer"
@@ -367,11 +350,11 @@ function ImageUploader(props: any) {
                   </div>
                   <div>
                     <Input
-                      placeholder="discount"
+                      placeholder="image url"
                       type="text"
-                      id="discount"
-                      name="discount"
-                      value={productDetails.discount}
+                      id="image"
+                      name="image"
+                      value={productDetails.image}
                       onChange={handleInputChange}
                       className="border p-2 w-full"
                     />
