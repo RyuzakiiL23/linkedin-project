@@ -10,7 +10,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+
+
 export default function CategoryDialog(props: any) {
+
+const handleDelete = async () => {
+  try {
+    const response = await fetch(`${process.env.baseURL}/api/categories/${props.categoryId}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    const data = await response.json();
+    if (data.message === 'category deleted successfuly') {
+      props.setDeleteState(!props.deleteState);
+    }
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+
+
+}
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -19,13 +43,7 @@ export default function CategoryDialog(props: any) {
       <DropdownMenuContent className={` w-56 bg-background`}>
         <DropdownMenuLabel>{props.category}</DropdownMenuLabel>
         <DropdownMenuItem
-          // onClick={async () => {
-          //   const res = await deleteCategory(props.categoryId);
-          //   if (res.message === "Category deleted") {
-          //     props.setDialogOpen(false);
- 
-          //   }
-          // }}
+          onClick={handleDelete}
           className="  text-red-700 hover:text-red-500 ease-in duration-150 font-bold"
         >
           <MdDelete className="mr-2 h-4 w-4" />

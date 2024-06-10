@@ -1,10 +1,20 @@
+'use client'
 import DarkLightToggle from "@/components/NavBar/DarkLightToggle";
 import Link from "next/link";
 import React from "react";
 import DashboadContainer from "./_components/DashboadContainer";
+import { useCookies } from "@/lib/hooks/cookiesState";
 
 export default function Dashboard() {
-  
+  const { session, user } = useCookies();
+  if (session === null || user !== 'admin') {
+    return(
+      <div className="flex justify-center items-center h-screen flex-col gap-4">
+        <h1>Not Authorized</h1>
+        <Link className="text-primary" href="/">Go Back home</Link>
+      </div>
+    );
+  }
   return (
     <div className=" w-screen relative h-screen">
 

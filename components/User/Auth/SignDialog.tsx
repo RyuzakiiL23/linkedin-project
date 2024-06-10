@@ -3,31 +3,54 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Sign } from "./Sign";
 import Cookies from "universal-cookie";
-import {useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export function SignDialog() {
   const cookies = useMemo(() => new Cookies(null, { path: "/" }), []);
-  const [session, setSession] = useState<any>();
+  const [session, setSession] = useState<string | null>(null);
   const [dialog, setDialog] = useState(false);
-  useEffect(() => {
-    setSession(cookies.get("session"));
-  }, [cookies]);
-  console.log(cookies.get("session"));
+  const [logoutButton, setLogoutButton] = useState(false);
 
-  const onLogout = () => {
-    cookies.remove("session");
-    setSession('');
+  useEffect(() => {
+    // Client-side check for the session cookie
+    const sessionCookie = cookies.get("session");
+    setSession(sessionCookie || "");
+  }, [cookies]);
+
+  const onLogout = async () => {
+    try {
+      const res = await fetch(`${process.env.baseURL}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          'Authorization': `Bearer ${cookies.get("session")}`,
+        },
+      });
+      console.log(res);
+      // Remove the session cookie and update state
+      cookies.remove("session");
+      cookies.remove("user");
+      setSession("");
+      setLogoutButton(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  if (session === null) {
+    // While checking the auth status, return null or a loading state
+    return null;
+  }
 
   return (
     <div>
-      {session === '' ? (
+      {session === "" && !logoutButton ? (
         <Dialog open={dialog} onOpenChange={setDialog}>
           <DialogTrigger asChild>
             <Button variant="outline">SignUp</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[465px]">
-            <Sign setDialog={setDialog}/>
+            <Sign setLogoutButton={setLogoutButton} setDialog={setDialog} />
           </DialogContent>
         </Dialog>
       ) : (

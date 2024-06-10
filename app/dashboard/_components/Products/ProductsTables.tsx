@@ -1,25 +1,10 @@
 "use client";
-import { getProductsByStore } from "@/lib/actions/productActions";
-import { RootState } from "@/lib/store";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import ProductDialog from "./ProductDialog";
 
 export default function ProductsTables(props: any) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [products, setPruducts] = useState<any>([]);
-  const dashState = useSelector((state: RootState) => state.dash.value);
-  useEffect(() => {
-    const storeProducts = async () => {
-      const res = await getProductsByStore(dashState);
-      if (res && typeof res === "object" && "message" in res) {
-        setPruducts([{}]);
-      } else {
-        setPruducts(await getProductsByStore(dashState));
-      }
-    };
-    storeProducts();
-  }, [dashState, props.open, dialogOpen]);
   return (
     <div className="border rounded m-4 ">
       <div className="flex relative items-center justify-between border-b">

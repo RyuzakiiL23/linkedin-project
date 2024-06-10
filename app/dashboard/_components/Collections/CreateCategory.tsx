@@ -12,17 +12,21 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
+import Cookies from "universal-cookie";
 
 export default function CreateCategory(props: any) {
+  const cookies = new Cookies(null, { path: "/" });
   const [categoryInfo, setCategoryInfo] = useState({
     name: "",
     description: "",
     image: "",
   });
 
-  console.log(categoryInfo)
+  const session = cookies.get("session");
+  // console.log(session);
+
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const uploadCategory = async (e: any) => {
     e.preventDefault();
@@ -32,19 +36,21 @@ export default function CreateCategory(props: any) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${session}`,
         },
         body: JSON.stringify(categoryInfo),
       });
-      const data = await response.json();
-      return data;
+      // const data = await response.json();
+      // console.log(data);
+      if (response.ok) {
+        console.log("ok");
+        props.setDialogOpen(false);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  props.setDialogOpen(true);
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState("");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

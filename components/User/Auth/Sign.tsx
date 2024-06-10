@@ -29,10 +29,11 @@ export function Sign(props: any) {
   });
 
   console.log(registerInfo);
+
   const onRegister = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/auth/register", {
+      const response = await fetch(`${process.env.baseURL}/api/auth/register`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -45,8 +46,10 @@ export function Sign(props: any) {
         throw new Error(data.error);
       }
       if (data.access_token) {
-        cookies.set("session", data);
+        cookies.set("session", data.access_token);
         props.setDialog(false);
+        props.setLogoutButton(true);
+        cookies.set("user", data.role);
       }
     } catch (error) {
       console.log(error);
@@ -56,7 +59,7 @@ export function Sign(props: any) {
   const onLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const response = await fetch(`${process.env.baseURL}/api/auth/login`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -68,9 +71,11 @@ export function Sign(props: any) {
       if (data.error) {
         throw new Error(data.error);
       }
-      if (data.access_token) {
-        cookies.set("session", data);
+     if (data.access_token) {
+        cookies.set("session", data.access_token);
+        cookies.set("user", data.role);
         props.setDialog(false);
+        props.setLogoutButton(true);
       }
     } catch (error) {
       console.log(error);

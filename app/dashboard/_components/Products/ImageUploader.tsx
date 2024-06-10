@@ -1,27 +1,20 @@
 "use client";
 
-import React, { ChangeEvent, useEffect } from "react";
-import { useState } from "react";
-import { MdCloudUpload, MdDelete } from "react-icons/md";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { MdCloudUpload } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ColumnSpacingIcon } from "@radix-ui/react-icons";
 import { Label } from "@/components/ui/label";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
 import Image from "next/image";
 import CreateCategory from "../Collections/CreateCategory";
 
@@ -32,17 +25,18 @@ interface ProductDetails {
   brand: string;
   condition: string;
   description: string;
+  category_id: string;
 }
+import Cookies from "universal-cookie";
 
 function ImageUploader(props: any) {
+  const cookies = new Cookies();
+  const session = cookies.get('session')
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [selectedFilePrincipal, setSelectedFilePrincipal] =
-    useState<File | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedFilePrincipal, setSelectedFilePrincipal] = useState<File | null>(null);
   const [categories, setCategories] = useState<any>();
-  // const [categoryLength, setCategoryLength] = useState<number>(0);
-
   const [productDetails, setProductDetails] = useState<ProductDetails>({
     name: "",
     price: "",
@@ -50,19 +44,35 @@ function ImageUploader(props: any) {
     brand: "",
     condition: "",
     description: "",
+    category_id: "",
   });
 
-  console.log("selectedCategory", selectedCategory);
-  console.log(productDetails);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${process.env.baseURL}/api/categories`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+          },
+        });
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  const handleCategorySelect = (value: React.SetStateAction<string>) => {
-    setSelectedCategory(value);
+  const handleCategoryChange = (value: string) => {
+    const selectedCategory = categories.find((category: any) => category.name === value);
+    if (selectedCategory) {
+      setProductDetails({ ...productDetails, category_id: selectedCategory.id });
+    }
   };
 
-  const handleFileChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const fileList = event.target.files;
     if (fileList && fileList.length > 0) {
       const newFiles = Array.from(fileList);
@@ -78,59 +88,67 @@ function ImageUploader(props: any) {
     const fileList = event.target.files;
     if (fileList && fileList.length > 0) {
       const file = fileList[0];
-
       setSelectedFilePrincipal(file);
     }
   };
 
   const handleSubmit = async () => {
-  if (!selectedFilePrincipal) {
-    alert('Please select an image to upload');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('file', selectedFilePrincipal);
-  formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || '');
-
-  try {
-    // Upload image to Cloudinary
-    const cloudinaryResponse = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {
-        method: 'POST',
-        body: formData,
+    if (!selectedFilePrincipal) {
+      alert("Please select an image to upload");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", selectedFilePrincipal);
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || "");
+  
+    try {
+      const cloudinaryResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+  
+      if (!cloudinaryResponse.ok) {
+        throw new Error("Failed to upload image to Cloudinary");
       }
-    );
-    const cloudinaryData = await cloudinaryResponse.json();
-    console.log('Image uploaded to Cloudinary:', cloudinaryData);
+  
+      const cloudinaryData = await cloudinaryResponse.json();
+      console.log("Image uploaded to Cloudinary:", cloudinaryData);
+  
+      const req = {
+        title: productDetails.name,
+        price: typeof productDetails.price === "string" ? parseFloat(productDetails.price) : productDetails.price,
+        description: productDetails.description,
+        category_id: parseFloat(productDetails.category_id),
+        image: cloudinaryData.secure_url,
+      };
 
-    // Send product details along with secure_url to backend
-    const req = {
-      title: productDetails.name,
-      price: typeof productDetails.price === 'string' ? parseFloat(productDetails.price) : productDetails.price,
-      description: productDetails.description,
-      category_id: parseFloat(productDetails.brand),
-      image: cloudinaryData.secure_url, // Use secure_url from Cloudinary response
-    };
-
-    const productResponse = await fetch(`${process.env.baseURL}/api/products`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(req),
-    });
-
-    console.log('Product created:', productResponse.ok);
-    const productData = await productResponse.json();
-    return productData;
-  } catch (error) {
-    console.error('Error creating product:', error);
-  }
-};
+      console.log('req', req)
+  
+      const productResponse = await fetch(`${process.env.baseURL}/api/products`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+        },
+        body: JSON.stringify(req),
+      });
+  
+      if (!productResponse.ok) {
+        throw new Error("Failed to create product");
+      }
+  
+      console.log("Product created:", productResponse.ok);
+      const productData = await productResponse.json();
+      return productData;
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -147,17 +165,13 @@ function ImageUploader(props: any) {
     setProductDetails({ ...productDetails, [name]: value });
   };
 
-  console.log(selectedFilePrincipal)
-
   const handleCancelPrincipal = () => {
     setSelectedFilePrincipal(null);
   };
 
   const handleCancel = (indexToDelete: number) => {
     setSelectedFiles((prevFiles) => {
-      const updatedFiles = prevFiles.filter(
-        (_, index) => index !== indexToDelete
-      );
+      const updatedFiles = prevFiles.filter((_, index) => index !== indexToDelete);
       return updatedFiles;
     });
   };
@@ -167,7 +181,7 @@ function ImageUploader(props: any) {
       <main className="flex w-full relative pr-8">
         <section className="flex relative w-[50%] mt-4">
           <div className="flex flex-col gap-2 relative items-center w-full">
-            <div className=" overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[100%] h-96 flex relative items-center justify-center">
+            <div className="overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[100%] h-96 flex relative items-center justify-center">
               {!selectedFilePrincipal ? (
                 <>
                   <label htmlFor="principalFile" className="">
@@ -202,26 +216,15 @@ function ImageUploader(props: any) {
               )}
             </div>
 
-            {/* Primary Image Display */}
-            {/* {selectedFilePrincipal && (
-            <div>
-              <img className='h-40 rounded' src={URL.createObjectURL(selectedFilePrincipal)} alt="Principal" />
-            </div>
-          )} */}
-
-            {/* Secondary Image Uploads */}
             <div className="flex relative gap-2 w-full h-24">
               {[0, 1, 2, 3].map((index) => (
                 <div
-                  className=" overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[24%] h-24 flex relative items-center justify-center"
+                  className="overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[24%] h-24 flex relative items-center justify-center"
                   key={index}
                 >
                   {!selectedFiles[index] ? (
                     <>
-                      <label
-                        htmlFor={`file-${index}`}
-                        className="hover:cursor-pointer "
-                      >
+                      <label htmlFor={`file-${index}`} className="hover:cursor-pointer ">
                         <p className="text-[40px]">
                           <MdCloudUpload />
                         </p>
@@ -236,11 +239,7 @@ function ImageUploader(props: any) {
                     </>
                   ) : (
                     <div className="h-full w-full relative">
-                      {/* <button onClick={() => handleCancel(index)} className='absolute top-2 right-2'>delete</button> */}
-                      <div
-                        onClick={() => handleCancel(index)}
-                        className="absolute text-red-600 hover:cursor-pointer"
-                      >
+                      <div onClick={() => handleCancel(index)} className="absolute text-red-600 hover:cursor-pointer">
                         <FaRegTrashCan style={{ fontSize: "18px" }} />
                       </div>
                       <Image
@@ -260,7 +259,10 @@ function ImageUploader(props: any) {
         <div className="p-4 flex w-[50%] relative">
           <div className="w-full ">
             <Select
-              onValueChange={handleCategorySelect}
+              onValueChange={(value) => {
+                setSelectedCategory(value);
+                handleCategoryChange(value);
+              }}
               defaultValue={selectedCategory}
             >
               <SelectTrigger className="w-[180px]">
@@ -270,15 +272,13 @@ function ImageUploader(props: any) {
                 <SelectGroup>
                   {categories
                     ? categories.map((category: any) => (
-                        <div key={category._id as string}>
-                          <SelectItem
-                            className="cursor-pointer"
-                            onClick={() => handleCategorySelect(category.name)}
-                            value={category.name}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        </div>
+                        <SelectItem
+                          className="cursor-pointer"
+                          key={category.id}
+                          value={category.name}
+                        >
+                          {category.name}
+                        </SelectItem>
                       ))
                     : null}
                   <CreateCategory setDialogOpen={setDialogOpen} />
@@ -331,17 +331,6 @@ function ImageUploader(props: any) {
                       className="border p-2 w-full"
                     />
                   </div>
-                  {/* <div>
-                    <Input
-                      placeholder="image url"
-                      type="text"
-                      id="image"
-                      name="image"
-                      value={productDetails.image}
-                      onChange={handleInputChange}
-                      className="border p-2 w-full"
-                    />
-                  </div> */}
                   <div>
                     <Textarea
                       placeholder="Description..."
@@ -416,9 +405,6 @@ function ImageUploader(props: any) {
             Submit
           </Button>
         </div>
-        {/* <Button onClick={handleSubmit} type="submit" className='w-full' >
-          Submit
-        </Button> */}
       </div>
     </>
   );
