@@ -1,41 +1,49 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { fetchCategories } from "@/lib/fetchFolder/fetchCategories";
+import { useEffect, useState } from "react";
+
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
 
 export default function PopularCollections() {
-  const collections = [
-    {
-      name: "Collection 1",
-      image: "/rog.png",
-      link: "/product/1",
-    },
-    {
-      name: "Collection 2",
-      image: "/rog.png",
-      link: "/product/2",
-    },
-    {
-      name: "Collection 3",
-      image: "/rog.png",
-      link: "/product/3",
-    },
-    {
-      name: "Collection 4",
-      image: "/rog.png",
-      link: "/product/4",
-    },
-    {
-      name: "Collection 5",
-      image: "/rog.png",
-      link: "/product/5",
-    },
-    {
-      name: "Collection 6",
-      image: "/rog.png",
-      link: "/product/6",
-    },
-  ];
+  const [collections, setCollections] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCategories();
+        if (data) {
+          setCollections(data);
+        } else {
+          setError("Failed to fetch categories");
+        }
+      } catch (error) {
+        setError("An error occurred while fetching categories");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
   return (
     <div className="my-10 lg:w-[1400px] mx-auto">
       <h2 className="w-full text-start font-bold h-full justify-center items-center text-primary text-2xl py-10">

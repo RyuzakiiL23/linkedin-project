@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Cookies from "universal-cookie";
+import ImageUploader from "./ImageUploader";
 
 export default function CreateCategory(props: any) {
   const cookies = new Cookies(null, { path: "/" });
@@ -25,7 +26,7 @@ export default function CreateCategory(props: any) {
   const session = cookies.get("session");
   // console.log(session);
 
-  const [open, setOpen] = useState(false);
+  const { dialogOpen, setDialogOpen } = props;
   const [error, setError] = useState("");
 
   const uploadCategory = async (e: any) => {
@@ -36,7 +37,7 @@ export default function CreateCategory(props: any) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${session}`,
+          Authorization: `Bearer ${session}`,
         },
         body: JSON.stringify(categoryInfo),
       });
@@ -44,7 +45,7 @@ export default function CreateCategory(props: any) {
       // console.log(data);
       if (response.ok) {
         console.log("ok");
-        props.setDialogOpen(false);
+        setDialogOpen(false);
       }
     } catch (error) {
       console.log(error);
@@ -52,12 +53,16 @@ export default function CreateCategory(props: any) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">+ New Category</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+    <div className="w-full relative">
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">+ New Category</Button>
+        </DialogTrigger>
+        <DialogContent className="min-w-full">
+          <div className="">
+          <ImageUploader />
+          </div>
+          {/* <DialogHeader>
           <DialogTitle>Add category</DialogTitle>
           <DialogDescription>
             Add a new category to your store
@@ -120,15 +125,16 @@ export default function CreateCategory(props: any) {
           <DialogFooter>
             <Button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => setDialogOpen(false)}
               variant="secondary"
             >
               Cancel
             </Button>
             <Button type="submit">Create</Button>
           </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </form> */}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

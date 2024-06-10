@@ -1,116 +1,80 @@
+'use client'
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { GoDotFill } from "react-icons/go";
 
-export default function Collections() {
-  const products = [
-    {
-      name: "Product 1",
-      brand: "SKILLCHAIRS",
-      price: "2,999.00 dh",
-      newPrice: "2,499.00 dh",
-      discount: "500.00 dh",
-      image1: "/Chaise1.webp",
-      image2: "/Chaise2.webp",
-      link: "/product/1",
-      availability: true,
-    },
-    {
-      name: "Product 2",
-      brand: "SKILLCHAIRS",
-      price: "2,999.00 dh",
-      newPrice: "2,499.00 dh",
-      discount: "500.00 dh",
-      image1: "/Chaise1.webp",
-      image2: "/Chaise2.webp",
-      link: "/product/2",
-      availability: false,
-    },
-    {
-      name: "Product 3",
-      brand: "SKILLCHAIRS",
-      price: "2,999.00 dh",
-      image1: "/Chaise1.webp",
-      image2: "/Chaise2.webp",
-      link: "/product/3",
-      availability: true,
-    },
-    {
-      name: "Product 4",
-      brand: "SKILLCHAIRS",
-      price: "2,999.00 dh",
-      newPrice: "2,499.00 dh",
-      discount: "500.00 dh",
-      image1: "/Chaise1.webp",
-      image2: "/Chaise2.webp",
-      link: "/product/4",
-      availability: true,
-    },
-    // {
-    //   name: "Product 5",
-    //   brand: "SKILLCHAIRS",
-    //   price: "2,999.00 dh",
-    //   image1: "/Chaise1.webp",
-    //   image2: "/Chaise2.webp",
-    //   link: "/product/5",
-    //   availability: true,
-    // },
-    // {
-    //   name: "Product 6",
-    //   brand: "SKILLCHAIRS",
-    //   price: "2,999.00 dh",
-    //   image1: "/Chaise1.webp",
-    //   image2: "/Chaise2.webp",
-    //   link: "/product/6",
-    //   availability: true,
-    // },
-  ];
+interface Collection {
+  name: string;
+  description: string;
+  image: string;
+  link: string;
+  id: number;
+}
 
-  const Collections = [
-    {
-      name: "Collection 1",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      image: "/rog.png",
-      link: "/Collection/1",
-    },
-    {
-      name: "Collection 2",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      image: "/rog.png",
-      link: "/Collection/2",
-    },
-    {
-      name: "Collection 3",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      image: "/rog.png",
-      link: "/Collection/3",
-    },
-  ];
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  category_id: number;
+  category_name: string;
+}
+
+const Collections: React.FC = () => {
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await fetch(`${process.env.baseURL}/api/categories`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch collections");
+        }
+        const data = await response.json();
+        setCollections(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${process.env.baseURL}/api/products`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCollections();
+    fetchProducts();
+  }, []);
 
   return (
-    <div className="my-10 lg:w-[1400px] mx-auto  ">
+    <div className="my-10 lg:w-[1400px] mx-auto">
       <h2 className="w-full text-start font-bold h-full justify-center items-center text-primary text-2xl py-10">
         Collections
       </h2>
       <div className="flex flex-col gap-20">
-        {Collections.map((collection) => (
+        {collections.map((collection) => (
           <div key={collection.name} className="flex bg-muted-foreground">
             <div className="flex h-96 w-96 justify-center items-center">
               <div className="w-[400px] h-[270px] p-8 bg-muted-foreground relative overflow-hidden group cursor-default">
                 <h4 className="font-bold text-xl pb-2 text-muted">
                   {collection.name}
                 </h4>
-                <p className="text-muted">
-                  {collection.description}
-                </p>
+                <p className="text-muted">{collection.description}</p>
                 <Link href={`/categories/${collection.name}`}>
-                <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
-                  voir plus
-                </button>
+                  <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
+                    voir plus
+                  </button>
                 </Link>
                 <Image
                   src={collection.image}
@@ -123,68 +87,44 @@ export default function Collections() {
               </div>
             </div>
             <div className="flex w-full m-2 justify-between h-full">
-              {products.map((product) => (
-                <Link href={`/products/${product.name}`} 
-                  key={product.name}
-                  className="w-full h-full p-2  relative bg-card border overflow-hidden group cursor-default"
-                >
-                  <div className="relative group h-60">
-                    <span
-                      className={` absolute z-50 px-2 bg-destructive text-white font-semibold text-xs ${
-                        product.discount ? "" : "hidden"
-                      }`}
-                    >
-                      -{product.discount}
-                    </span>
-                    <Image
-                      src={product.image2}
-                      alt={product.name}
-                      width={500}
-                      height={500}
-                      className="group-hover:opacity-100 opacity-0 transition duration-300 ease-out absolute cursor-pointer"
-                    />
-                    <Image
-                      src={product.image1}
-                      alt={product.name}
-                      width={500}
-                      height={500}
-                      className="group-hover:opacity-0 transition duration-300 ease-out absolute cursor-pointer"
-                    />
-                  </div>
-                  <div className="p-4 h-full">
-                    <h3 className="text-xs font-md text-muted-foreground hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
-                      {product.brand}
-                    </h3>
-                    <h4 className="font-semibold text-sm py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
-                      {product.name}
-                    </h4>
-                    <div className="flex mt-6 gap-4 items-center mb-2">
-                      <p className="text-cyan-400 text-semibold">
-                        {product.newPrice ? product.newPrice : product.price}
-                      </p>
-                      <p className="text-small line-through	text-xs text-muted-foreground">
-                        {product.newPrice ? product.price : ""}
-                      </p>
+              {products
+                .filter((product) => product.category_id === collection.id)
+                .map((product) => (
+                  <Link
+                    href={`/products/${product.id}`}
+                    key={product.id}
+                    className="w-full h-full p-2  relative bg-card border overflow-hidden group cursor-default"
+                  >
+                    <div className="relative group h-60">
+                      <Image
+                        src={product.image}
+                        alt={product.title}
+                        width={200}
+                        height={200}
+                        className=" absolute cursor-pointer"
+                      />
                     </div>
-                    <div
-                      className={`${
-                        product.availability
-                          ? "text-green-600"
-                          : "text-destructive"
-                      } font-semibold text-sm flex items-center gap-2 `}
-                    >
-                      <GoDotFill />
-                      <p>
-                        {product.availability ? "in stock" : "out of stock"}
-                      </p>
+                    <div className="p-4 h-full">
+                      <h3 className="text-xs font-md text-muted-foreground hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
+                        {product.category_name}
+                      </h3>
+                      <h4 className="font-semibold text-sm py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
+                        {product.title}
+                      </h4>
+                      <div className="flex mt-6 gap-4 items-center mb-2">
+                        <p className="text-cyan-400 text-semibold">
+                          {product.price}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default Collections;

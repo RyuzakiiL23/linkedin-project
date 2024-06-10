@@ -6,14 +6,6 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import CreateCategory from "../Collections/CreateCategory";
@@ -78,20 +70,6 @@ function ImageUploader(props: any) {
     }
   };
 
-  const handleFileChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const fileList = event.target.files;
-    if (fileList && fileList.length > 0) {
-      const newFiles = Array.from(fileList);
-      setSelectedFiles((prevFiles) => {
-        const updatedFiles = [...prevFiles];
-        updatedFiles[index] = newFiles[0];
-        return updatedFiles;
-      });
-    }
-  };
 
   const handlePrincipalFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -132,20 +110,15 @@ function ImageUploader(props: any) {
       console.log("Image uploaded to Cloudinary:", cloudinaryData);
 
       const req = {
-        title: productDetails.name,
-        price:
-          typeof productDetails.price === "string"
-            ? parseFloat(productDetails.price)
-            : productDetails.price,
+        name: productDetails.name,
         description: productDetails.description,
-        category_id: parseFloat(productDetails.category_id),
         image: cloudinaryData.secure_url,
       };
 
       console.log("req", req);
 
       const productResponse = await fetch(
-        `${process.env.baseURL}/api/products`,
+        `${process.env.baseURL}/api/categories`,
         {
           method: "POST",
           credentials: "include",
@@ -248,81 +221,10 @@ function ImageUploader(props: any) {
               )}
             </div>
 
-            <div className="flex relative gap-2 w-full h-24">
-              {[0, 1, 2, 3].map((index) => (
-                <div
-                  className="overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[24%] h-24 flex relative items-center justify-center"
-                  key={index}
-                >
-                  {!selectedFiles[index] ? (
-                    <>
-                      <label
-                        htmlFor={`file-${index}`}
-                        className="hover:cursor-pointer "
-                      >
-                        <p className="text-[40px]">
-                          <MdCloudUpload />
-                        </p>
-                      </label>
-                      <input
-                        type="file"
-                        id={`file-${index}`}
-                        accept="image/*"
-                        hidden
-                        onChange={(event) => handleFileChange(event, index)}
-                      />
-                    </>
-                  ) : (
-                    <div className="h-full w-full relative">
-                      <div
-                        onClick={() => handleCancel(index)}
-                        className="absolute text-red-600 hover:cursor-pointer"
-                      >
-                        <FaRegTrashCan style={{ fontSize: "18px" }} />
-                      </div>
-                      <Image
-                        className="h-full w-full rounded object-cover"
-                        src="http://localhost:3000/omar.png"
-                        alt={`Selected ${index + 1}`}
-                        layout="fill"
-                        objectFit="cover"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
           </div>
         </section>
         <div className="p-4 flex w-[50%] relative">
           <div className="w-full ">
-            <Select
-              onValueChange={(value) => {
-                setSelectedCategory(value);
-                handleCategoryChange(value);
-              }}
-              defaultValue={selectedCategory}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {categories
-                    ? categories.map((category: any) => (
-                        <SelectItem
-                          className="cursor-pointer"
-                          key={category.id}
-                          value={category.name}
-                        >
-                          {category.name}
-                        </SelectItem>
-                      ))
-                    : null}
-                  <CreateCategory setDialogOpen={setDialogOpen} />
-                </SelectGroup>
-              </SelectContent>
-            </Select>
             <form
               action={handleSubmit}
               className="flex w-full flex-col relative mt-4"
@@ -336,17 +238,6 @@ function ImageUploader(props: any) {
                     value={selectedCategory}
                     name="category"
                   />
-                  {/* <div>
-                    <Input
-                      placeholder="Brand"
-                      type="text"
-                      id="brand"
-                      name="brand"
-                      value={productDetails.brand}
-                      onChange={handleInputChange}
-                      className="border p-2 w-full"
-                    />
-                  </div> */}
                   <div>
                     <Input
                       placeholder="Name"
@@ -354,17 +245,6 @@ function ImageUploader(props: any) {
                       id="name"
                       name="name"
                       value={productDetails.name}
-                      onChange={handleInputChange}
-                      className="border p-2 w-full"
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      placeholder="Price"
-                      type="text"
-                      id="price"
-                      name="price"
-                      value={productDetails.price}
                       onChange={handleInputChange}
                       className="border p-2 w-full"
                     />
@@ -378,51 +258,6 @@ function ImageUploader(props: any) {
                       onChange={handleTextareaChange}
                       className="border p-2 w-full h-60"
                     />
-                  </div>
-                  <div>
-                    <h1 className="text-sm py-2 mb-2 text-muted-foreground">
-                      Condition of the product
-                    </h1>
-                    <div className="flex gap-4">
-                      <div className="flex cursor-pointer items-center space-x-2">
-                        <input
-                          className="cursor-pointer"
-                          required={true}
-                          type="radio"
-                          name="condition"
-                          value="new"
-                          id="r2"
-                          onChange={(e) =>
-                            setProductDetails({
-                              ...productDetails,
-                              condition: e.target.value,
-                            })
-                          }
-                        />
-                        <Label className="cursor-pointer" htmlFor="r2">
-                          New
-                        </Label>
-                      </div>
-                      <div className="flex cursor-pointer items-center space-x-2">
-                        <input
-                          className="cursor-pointer"
-                          required={true}
-                          type="radio"
-                          name="condition"
-                          value="used"
-                          id="r3"
-                          onChange={(e) =>
-                            setProductDetails({
-                              ...productDetails,
-                              condition: e.target.value,
-                            })
-                          }
-                        />
-                        <Label className="cursor-pointer" htmlFor="r3">
-                          Used
-                        </Label>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

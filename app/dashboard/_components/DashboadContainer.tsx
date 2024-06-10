@@ -38,7 +38,7 @@ export default function DashboadContainer() {
         {active === "collections" ? (
           <div className="h-full ">
             <DashCollections />
-            <CreateCategory setDialogOpen={setDialogOpen} />
+            <CreateCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
           </div>
         ) : (
           <div className="h-full  ">

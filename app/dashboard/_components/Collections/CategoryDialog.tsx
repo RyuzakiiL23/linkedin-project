@@ -30,7 +30,7 @@ export default function CategoryDialog(props: any) {
       );
       const data = await response.json();
       if (data.message === "category deleted successfuly") {
-        props.setDeleteState(!props.deleteState);
+        // props.setDeleteState(!props.deleteState);
       }
       console.log(data);
     } catch (error) {

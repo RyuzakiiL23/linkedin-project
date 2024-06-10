@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import CategoryDialog from "./Collections/CategoryDialog";
 import Cookies from "universal-cookie";
+import Image from "next/image";
 
 export default function DashCollections() {
   const cookies = new Cookies(null, { path: '/' });
@@ -28,7 +29,7 @@ export default function DashCollections() {
       }
     };
     fetchCategories();
-  }, [deleteState]);
+  }, [deleteState, dialogOpen]);
 
   return (
     <div className="h-full m-8">
@@ -45,7 +46,9 @@ export default function DashCollections() {
             key={item.id}
             className="flex relative items-center justify-between h-16"
           >
-            <div className="p-2 w-[10%]">{item.image}</div>
+            <div className="p-2 w-[10%]">
+              <Image src={item.image} width="50" height="50" alt={item.name} />
+              </div>
             <div className="p-2 w-[20%]">{item.name}</div>
             {/* <div className="p-2 w-[10%]">{item.status}</div> */}
             <div className="p-2 w-[40%]">{item.description}</div>
