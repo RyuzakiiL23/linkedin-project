@@ -43,7 +43,7 @@ export default function DashboadContainer() {
         ) : (
           <div className="h-full  ">
             <DashProducts/>
-            <AddProductDialog setDialogOpen={setDialogOpen} />
+            <AddProductDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
           </div>
         )}
       </div>

@@ -15,11 +15,11 @@ import { Input } from "@/components/ui/input";
 import ImageUploader from "./ImageUploader";
 
 export default function AddProductDialog(props: any) {
-  const { open, setOpen } = props;
+  const { dialogOpen, setDialogOpen } = props;
   // const [open, setOpen] = useState(false);
   return (
     <div className="m-4">
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">+ Add Product</Button>
         </DialogTrigger>
@@ -28,7 +28,7 @@ export default function AddProductDialog(props: any) {
             <DialogTitle>Add Your Product</DialogTitle>
           </DialogHeader>
           <div className="w-screen">
-            <ImageUploader setOpen={setOpen} />
+            <ImageUploader setDialogOpen={setDialogOpen} />
           </div>
         </DialogContent>
       </Dialog>

@@ -10,8 +10,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCookies } from "@/lib/hooks/cookiesState";
 
 export default function ProductDialog(props: any) {
+  const {session} = useCookies()
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.baseURL}/api/products/${props.productId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.message === 'product deleted succesfully') {
+        props.setDialogOpen(false);
+      }
+      console.log(data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,6 +48,7 @@ export default function ProductDialog(props: any) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="  text-red-700 hover:text-red-500 ease-in duration-150 font-bold"
+          onClick={handleDelete}
         >
           <MdDelete className="mr-2 h-4 w-4" />
           <span>Delete Product</span>

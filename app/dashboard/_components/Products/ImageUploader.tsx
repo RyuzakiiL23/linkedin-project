@@ -31,11 +31,13 @@ import Cookies from "universal-cookie";
 
 function ImageUploader(props: any) {
   const cookies = new Cookies();
-  const session = cookies.get('session')
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const session = cookies.get("session");
+  const [waiting, setWaiting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [selectedFilePrincipal, setSelectedFilePrincipal] = useState<File | null>(null);
+  const [selectedFilePrincipal, setSelectedFilePrincipal] =
+    useState<File | null>(null);
   const [categories, setCategories] = useState<any>();
   const [productDetails, setProductDetails] = useState<ProductDetails>({
     name: "",
@@ -53,8 +55,7 @@ function ImageUploader(props: any) {
         const response = await fetch(`${process.env.baseURL}/api/categories`, {
           method: "GET",
           credentials: "include",
-          headers: {
-          },
+          headers: {},
         });
         const data = await response.json();
         setCategories(data);
@@ -66,13 +67,21 @@ function ImageUploader(props: any) {
   }, []);
 
   const handleCategoryChange = (value: string) => {
-    const selectedCategory = categories.find((category: any) => category.name === value);
+    const selectedCategory = categories.find(
+      (category: any) => category.name === value
+    );
     if (selectedCategory) {
-      setProductDetails({ ...productDetails, category_id: selectedCategory.id });
+      setProductDetails({
+        ...productDetails,
+        category_id: selectedCategory.id,
+      });
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleFileChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const fileList = event.target.files;
     if (fileList && fileList.length > 0) {
       const newFiles = Array.from(fileList);
@@ -97,11 +106,15 @@ function ImageUploader(props: any) {
       alert("Please select an image to upload");
       return;
     }
-  
+
+    setWaiting(true);
     const formData = new FormData();
     formData.append("file", selectedFilePrincipal);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || "");
-  
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
+    );
+
     try {
       const cloudinaryResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -110,38 +123,46 @@ function ImageUploader(props: any) {
           body: formData,
         }
       );
-  
+
       if (!cloudinaryResponse.ok) {
         throw new Error("Failed to upload image to Cloudinary");
       }
-  
+
       const cloudinaryData = await cloudinaryResponse.json();
       console.log("Image uploaded to Cloudinary:", cloudinaryData);
-  
+
       const req = {
         title: productDetails.name,
-        price: typeof productDetails.price === "string" ? parseFloat(productDetails.price) : productDetails.price,
+        price:
+          typeof productDetails.price === "string"
+            ? parseFloat(productDetails.price)
+            : productDetails.price,
         description: productDetails.description,
         category_id: parseFloat(productDetails.category_id),
         image: cloudinaryData.secure_url,
       };
 
-      console.log('req', req)
-  
-      const productResponse = await fetch(`${process.env.baseURL}/api/products`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-            "Authorization": `Bearer ${session}`,
-        },
-        body: JSON.stringify(req),
-      });
-  
+      console.log("req", req);
+
+      const productResponse = await fetch(
+        `${process.env.baseURL}/api/products`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+          body: JSON.stringify(req),
+        }
+      );
+
       if (!productResponse.ok) {
         throw new Error("Failed to create product");
       }
-  
+
+      setWaiting(false);
+      props.setDialogOpen(false);
       console.log("Product created:", productResponse.ok);
       const productData = await productResponse.json();
       return productData;
@@ -171,7 +192,9 @@ function ImageUploader(props: any) {
 
   const handleCancel = (indexToDelete: number) => {
     setSelectedFiles((prevFiles) => {
-      const updatedFiles = prevFiles.filter((_, index) => index !== indexToDelete);
+      const updatedFiles = prevFiles.filter(
+        (_, index) => index !== indexToDelete
+      );
       return updatedFiles;
     });
   };
@@ -179,6 +202,15 @@ function ImageUploader(props: any) {
   return (
     <>
       <main className="flex w-full relative pr-8">
+        <div
+          className={`${
+            waiting
+              ? "absolute h-full w-full bg-background opacity-50 z-50"
+              : "hidden"
+          }`}
+        >
+          <p className="text-4xl w-full text-center">Adding ...</p>
+        </div>
         <section className="flex relative w-[50%] mt-4">
           <div className="flex flex-col gap-2 relative items-center w-full">
             <div className="overflow-hidden hover:text-primary transition duration-300 ease-in-out p-1 text-muted-foreground border-muted-foreground hover:border-primary border border-dashed rounded w-[100%] h-96 flex relative items-center justify-center">
@@ -224,7 +256,10 @@ function ImageUploader(props: any) {
                 >
                   {!selectedFiles[index] ? (
                     <>
-                      <label htmlFor={`file-${index}`} className="hover:cursor-pointer ">
+                      <label
+                        htmlFor={`file-${index}`}
+                        className="hover:cursor-pointer "
+                      >
                         <p className="text-[40px]">
                           <MdCloudUpload />
                         </p>
@@ -239,7 +274,10 @@ function ImageUploader(props: any) {
                     </>
                   ) : (
                     <div className="h-full w-full relative">
-                      <div onClick={() => handleCancel(index)} className="absolute text-red-600 hover:cursor-pointer">
+                      <div
+                        onClick={() => handleCancel(index)}
+                        className="absolute text-red-600 hover:cursor-pointer"
+                      >
                         <FaRegTrashCan style={{ fontSize: "18px" }} />
                       </div>
                       <Image
@@ -395,7 +433,7 @@ function ImageUploader(props: any) {
       <div>
         <div className="flex gap-4 w-full items-start">
           <Button
-            onClick={() => props.setOpen(false)}
+            onClick={() => props.setDialogOpen(false)}
             type="button"
             variant="secondary"
           >

@@ -23,7 +23,7 @@ export default function DashProducts() {
       }
     };
     getProduct();
-  }, []);
+  }, [dialogOpen]);
 
   return (
     <div className="h-full m-8 ">
@@ -37,7 +37,7 @@ export default function DashProducts() {
       {products ? (
         products.map((item: any) => (
           <div
-            key={item._id}
+            key={item.id}
             className="flex relative items-center justify-between h-16"
           >
             <div className="p-2 w-[10%]">
@@ -53,8 +53,8 @@ export default function DashProducts() {
             <div className="p-2 w-[10%]">{item.price}</div>
             <div onClick={() => setDialogOpen(true)} className="p-2 w-[5%]">
               <ProductDialog
-                product={item.name}
-                productId={item._id}
+                product={item.title}
+                productId={item.id}
                 setDialogOpen={setDialogOpen}
               />
             </div>

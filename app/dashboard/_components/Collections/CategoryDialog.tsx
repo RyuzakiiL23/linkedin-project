@@ -10,31 +10,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
+import { useCookies } from "@/lib/hooks/cookiesState";
 
 export default function CategoryDialog(props: any) {
+  const { session } = useCookies();
 
-const handleDelete = async () => {
-  try {
-    const response = await fetch(`${process.env.baseURL}/api/categories/${props.categoryId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    const data = await response.json();
-    if (data.message === 'category deleted successfuly') {
-      props.setDeleteState(!props.deleteState);
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.baseURL}/api/categories/${props.categoryId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.message === "category deleted successfuly") {
+        props.setDeleteState(!props.deleteState);
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
-    console.log(data);
-  } catch (error) {
-    console.log(error);
-  }
-
-
-}
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
