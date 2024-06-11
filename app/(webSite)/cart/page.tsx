@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { FaCartShopping, FaMoneyCheckDollar, FaRegTrashCan } from 'react-icons/fa6';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Cookies from 'universal-cookie';
 
@@ -64,6 +63,7 @@ export default function Cart() {
       if (!response.ok) {
         throw new Error("Failed to remove article from cart");
       }
+      console.log(response)
       setArticles(articles.filter(article => article.id !== id));
       calculateTotalPrice(articles.filter(article => article.id !== id));
     } catch (error) {
@@ -106,10 +106,6 @@ export default function Cart() {
                 </div>
               </div>
               <div className='w-[20%]'></div>
-
-              {/* <div className='flex w-[20%] items-center relative'>
-                <Input className='ml-2 w-16' type="number" min="1" value={article.quantity} readOnly />
-              </div> */}
 
               <div className='flex w-[20%] items-center relative'>
                 <span className="ml-4 text-primary">

@@ -16,7 +16,6 @@ import ImageUploader from "./ImageUploader";
 
 export default function AddProductDialog(props: any) {
   const { dialogOpen, setDialogOpen } = props;
-  // const [open, setOpen] = useState(false);
   return (
     <div className="m-4">
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

@@ -41,8 +41,6 @@ export default function CreateCategory(props: any) {
         },
         body: JSON.stringify(categoryInfo),
       });
-      // const data = await response.json();
-      // console.log(data);
       if (response.ok) {
         console.log("ok");
         setDialogOpen(false);
@@ -53,7 +51,7 @@ export default function CreateCategory(props: any) {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="m-4 w-full relative">
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">+ New Category</Button>
@@ -62,77 +60,6 @@ export default function CreateCategory(props: any) {
           <div className="">
           <ImageUploader />
           </div>
-          {/* <DialogHeader>
-          <DialogTitle>Add category</DialogTitle>
-          <DialogDescription>
-            Add a new category to your store
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={uploadCategory}>
-          <div className="grid w-80 gap-4 py-4">
-            <div className="">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                name="name"
-                placeholder="Category"
-                className="w-full"
-                onChange={(e) =>
-                  setCategoryInfo({
-                    ...categoryInfo,
-                    name: e.currentTarget.value,
-                  })
-                }
-              />
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Input
-                name="desctiption"
-                placeholder="Description"
-                className="w-full"
-                onChange={(e) =>
-                  setCategoryInfo({
-                    ...categoryInfo,
-                    description: e.currentTarget.value,
-                  })
-                }
-              />
-              <Label htmlFor="image" className="text-right">
-                Image
-              </Label>
-              <Input
-                name="image"
-                placeholder="image url"
-                className="w-full"
-                onChange={(e) =>
-                  setCategoryInfo({
-                    ...categoryInfo,
-                    image: e.currentTarget.value,
-                  })
-                }
-              />
-            </div>
-            <p
-              className={
-                error !== "" ? "text-destructive text-center w-full" : "hidden"
-              }
-            >
-              {error}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              onClick={() => setDialogOpen(false)}
-              variant="secondary"
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Create</Button>
-          </DialogFooter>
-        </form> */}
         </DialogContent>
       </Dialog>
     </div>

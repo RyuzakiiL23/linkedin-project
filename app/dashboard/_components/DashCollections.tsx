@@ -1,11 +1,11 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import CategoryDialog from "./Collections/CategoryDialog";
 import Cookies from "universal-cookie";
 import Image from "next/image";
 
 export default function DashCollections() {
-  const cookies = new Cookies(null, { path: '/' });
+  const cookies = new Cookies(null, { path: "/" });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [collections, setCollections] = useState([]);
   const [deleteState, setDeleteState] = useState(false);
@@ -40,29 +40,36 @@ export default function DashCollections() {
         <div className="p-2 w-[40%]">description</div>
         <div className="p-2 w-[5%]">...</div>
       </div>
-      {Array.isArray(collections) &&
-        collections.map((item: any) => (
-          <div
-            key={item.id}
-            className="flex relative items-center justify-between h-16"
-          >
-            <div className="p-2 w-[10%]">
-              <Image src={item.image} width="50" height="50" alt={item.name} />
+      <div className=" h-[60vh] overflow-auto">
+        {Array.isArray(collections) &&
+          collections.map((item: any) => (
+            <div
+              key={item.id}
+              className="flex relative items-center justify-between h-16"
+            >
+              <div className="p-2 w-[10%]">
+                <Image
+                  src={item.image}
+                  width="50"
+                  height="50"
+                  alt={item.name}
+                />
               </div>
-            <div className="p-2 w-[20%]">{item.name}</div>
-            {/* <div className="p-2 w-[10%]">{item.status}</div> */}
-            <div className="p-2 w-[40%]">{item.description}</div>
-            <div onClick={() => setDialogOpen(true)} className="p-2 w-[5%]">
-              <CategoryDialog
-                category={item.name}
-                categoryId={item.id}
-                setDeleteState={setDeleteState}
-                deleteState={deleteState}
-                setDialogOpen={setDialogOpen}
-              />
+              <div className="p-2 w-[20%]">{item.name}</div>
+              {/* <div className="p-2 w-[10%]">{item.status}</div> */}
+              <div className="p-2 w-[40%]">{item.description}</div>
+              <div onClick={() => setDialogOpen(true)} className="p-2 w-[5%]">
+                <CategoryDialog
+                  category={item.name}
+                  categoryId={item.id}
+                  setDeleteState={setDeleteState}
+                  deleteState={deleteState}
+                  setDialogOpen={setDialogOpen}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 }

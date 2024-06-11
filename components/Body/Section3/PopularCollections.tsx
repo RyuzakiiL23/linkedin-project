@@ -49,8 +49,8 @@ export default function PopularCollections() {
       <h2 className="w-full text-start font-bold h-full justify-center items-center text-primary text-2xl py-10">
         PopularCollections
       </h2>
-      <div className="flex gap-4 justify-between">
-        {collections.map((collection) => (
+      <div className="flex gap-4 justify-around">
+        {collections.slice(0, 6).map((collection) => (
           <Link href={`/categories/${collection.id}`} className="group cursor-pointer"  key={collection.name}>
             <div className="w-48 h-48 p-8 bg-border rounded-full cursor-pointer relative flex items-center justify-center overflow-hidden">
               <Image

@@ -89,7 +89,7 @@ export default function FeaturedProducts() {
               <h3 className="text-xs font-md text-muted-foreground hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                 {product.category_name}
               </h3>
-              <h4 className="font-semibold text-sm py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
+              <h4 className="font-semibold text-sm h-10 py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                 {product.title}
               </h4>
               <div className="flex mt-6 gap-4 items-center mb-2">

@@ -57,7 +57,7 @@ export default function BestProducts() {
             <h4 className="font-bold text-xl pb-2 text-muted-foreground">
               {category.name}
             </h4>
-            <p className="text-muted-foreground">{category.description}</p>
+            <p className="relative text-muted-foreground z-40">{category.description}</p>
             <Link href={`/categories/${category.id}`}>
               <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
                 voir plus
@@ -69,7 +69,7 @@ export default function BestProducts() {
               width="240"
               height={68}
               style={{ height: "auto" }}
-              className="absolute bottom-[-40px] right-[-20px] group-hover:bottom-[-20px] transition-all duration-500 ease-out"
+              className="absolute bottom-[-40px] right-[-20px] group-hover:bottom-[-20px] z-30 transition-all duration-500 ease-out"
             />
           </div>
         ))}

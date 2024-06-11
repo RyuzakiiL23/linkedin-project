@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface Product {
   id: number;
@@ -27,12 +27,12 @@ function AllProducts() {
       try {
         const response = await fetch(`${process.env.baseURL}/api/products`);
         if (!response.ok) {
-          throw new Error('Failed to fetch products');
+          throw new Error("Failed to fetch products");
         }
         const data: Product[] = await response.json();
         setProducts(data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -48,15 +48,14 @@ function AllProducts() {
       </div>
       <div className="flex gap-2 flex-wrap">
         {products.map((product) => (
-          <Link href={`/products/${product.id}`}
+          <Link
+            href={`/products/${product.id}`}
             key={product.id}
-            className="my-8 h-full p-2 relative bg-card border overflow-hidden group cursor-default"
+            className="my-8 h-full w-60 p-2 relative bg-card border overflow-hidden group cursor-default"
           >
-            <div className="relative group h-60">
+            <div className="relative group h-60 flex justify-center items-center">
               {product.discount && (
-                <span
-                  className="absolute z-40 px-2 bg-destructive text-white font-semibold text-xs"
-                >
+                <span className="absolute z-40 px-2 bg-destructive text-white font-semibold text-xs">
                   {product.discount}
                 </span>
               )}
@@ -79,7 +78,7 @@ function AllProducts() {
               <h3 className="text-xs font-md text-muted-foreground hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                 {product.category_name}
               </h3>
-              <h4 className="font-semibold text-sm py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
+              <h4 className="font-semibold h-10 text-sm py-2 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                 {product.title}
               </h4>
               <div className="flex mt-6 gap-4 items-center mb-2">
