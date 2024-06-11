@@ -58,7 +58,7 @@ export default function BestProducts() {
               {category.name}
             </h4>
             <p className="text-muted-foreground">{category.description}</p>
-            <Link href={`/categories/${category.name}`}>
+            <Link href={`/categories/${category.id}`}>
               <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
                 voir plus
               </button>

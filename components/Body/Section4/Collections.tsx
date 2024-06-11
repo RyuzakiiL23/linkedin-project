@@ -71,7 +71,7 @@ const Collections: React.FC = () => {
                   {collection.name}
                 </h4>
                 <p className="text-muted">{collection.description}</p>
-                <Link href={`/categories/${collection.name}`}>
+                <Link href={`/categories/${collection.id}`}>
                   <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
                     voir plus
                   </button>

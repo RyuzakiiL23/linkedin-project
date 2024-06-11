@@ -51,7 +51,7 @@ export default function PopularCollections() {
       </h2>
       <div className="flex gap-4 justify-between">
         {collections.map((collection) => (
-          <Link href={`/categories/${collection.name}`} className="group cursor-pointer"  key={collection.name}>
+          <Link href={`/categories/${collection.id}`} className="group cursor-pointer"  key={collection.name}>
             <div className="w-48 h-48 p-8 bg-border rounded-full cursor-pointer relative flex items-center justify-center overflow-hidden">
               <Image
                 src={collection.image}

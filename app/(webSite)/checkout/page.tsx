@@ -1,28 +1,18 @@
-'use client'
+'use client';
 
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
-// import Cookies from 'universal-cookie';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { FaCartShopping, FaMoneyCheckDollar, FaRegTrashCan } from 'react-icons/fa6';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-// import { Context } from '@/app/layout';
 import Image from "next/image";
+import Cookies from 'universal-cookie';
 
 interface Article {
-  name: string;
   id: number;
-  brand: string;
-  processor: string;
+  title: string;
+  category_name: string;
   price: number;
-  principalImage: string;
-  // Add other properties as needed
+  image: string;
+  quantity: number;
 }
 
 interface CltDetails {
@@ -43,88 +33,39 @@ export default function Checkout() {
     Ville: '',
     Téléphone: '',
   });
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const cookies = new Cookies();
+  const session = cookies.get("session");
 
-  const [sheetOpen, setSheetOpen] = useState(false);
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await fetch(`${process.env.baseURL}/api/cart`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart data");
+        }
+        const data = await response.json();
+        setArticles(data);
+        calculateTotalPrice(data);
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      }
+    };
 
-//   const { articleCookie, setArticleCookie } = useContext(Context) || {
-//     artileCookie: [],
-//     setArticleCookie: () => { },
-//   };
-//   const cookies = new Cookies();
+    fetchCartData();
+  }, [session]);
 
-//   useEffect(() => {
-//     fetch('http://localhost:8080/articles')
-//       .then((response) => response.json())
-//       .then((data: Article[]) => {
-//         const filteredArticles = data.filter((article) => articleCookie?.[article.id]);
-//         const filteredArticlesArray = Object.values(filteredArticles);
-//         setArticles(filteredArticlesArray);
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching articles:', error);
-//       });
-//   }, [count, articleCookie]);
-
-//   const handleQuantityChange = (event: ChangeEvent<HTMLInputElement>, id: number) => {
-//     const item = { [id]: event.target.value.toString() };
-//     if (!articleCookie?.[id] || Object.values(item) !== item) {
-//       setArticleCookie((prevObject) => {
-//         const newArticleCookie = { ...prevObject, [id]: item };
-//         return newArticleCookie;
-//       });
-
-//       cookies.set(id.toString(), item, {
-//         // Add any additional cookie settings if needed
-//       });
-//     } else {
-//       console.log('id already exists in cart and cookies');
-//     }
-//   };
-
-//   useEffect(() => {
-//     const articleCookieValues = Object.values(articleCookie ?? {});
-//     setCount(articleCookieValues.length);
-//   }, [articleCookie]);
-
-//   const handleRemoveCookie = (val: string) => {
-//     cookies.remove(val);
-
-//     setArticleCookie((prevObject) => {
-//       const newArticleCookie = { ...prevObject };
-//       delete newArticleCookie[val];
-//       return newArticleCookie;
-//     });
-
-//     setArticles((prevArticles) => prevArticles.filter((article) => article.id.toString() !== val));
-//   };
-
-  const articles = [
-    {
-      id: 1,
-      name: "Product 6",
-      brand: "SKILLCHAIRS",
-      price: 2999,
-      image1: "/Chaise1.webp",
-      link: "/product/6",
-      availability: true,
-    },
-    {
-      id: 1,
-      name: "Product 6",
-      brand: "SKILLCHAIRS",
-      price: 2999,
-      image1: "/Chaise2.webp",
-      link: "/product/6",
-      availability: true,
-    },
-  ];
-
-  const getTotalPrice = () => {
-    return articles.reduce((acc, article) => {
-      return acc + article.price;
-    }, 0);
+  const calculateTotalPrice = (articles: Article[]) => {
+    const total = articles.reduce((acc, article) => acc + article.price, 0);
+    setTotalPrice(total);
   };
-
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -199,56 +140,49 @@ export default function Checkout() {
         </div>
         <div className='flex w-full justify-between px-20'>
             <span className="p-4">Total</span>
-            <span className="p-4 text-primary ">{getTotalPrice()} Dh</span>
+            <span className="p-4 text-primary ">{totalPrice} Dh</span>
           </div>
       </div>
       <div className="w-[40%] mr-10">
         <div className="flex border-b relative">
-          <p className="ml-4 w-[64%]">Produit</p>
-          <p className="ml-4 w-[18%]">Quanité</p>
-          <p className="ml-4 w-[18%]">Total</p>
+          <p className="ml-4 w-[64%]">Products</p>
+          <p className="ml-4 w-[18%]"></p>
+          <p className="ml-4 w-[18%]">Prices</p>
         </div>
         {articles.map((article) => (
           <div
             className="bg-background flex border-b px-4 relative"
             key={article.id}
           >
-            <div className="flex w-[70%] ">
+            <div className="flex items-center justify-between w-full px-8 ">
               <div className="w-[30%] h-[150px] flex items-center justify-center cursor-default relative">
                 <Link
-                  onClick={() => setSheetOpen(false)}
+                  // onClick={() => setSheetOpen(false)}
                   className="relative w-full h-2/3"
                   href={`/shop/${article.id}`}
                 >
                   <Image
-                    src={article.image1}
-                    alt={`Image for ${article.brand}`}
-                    layout="fill"
-                    objectFit="cover"
+                    src={article.image}
+                    alt={`Image for ${article.category_name}`}
+                    width={100}
+                    height={100}
+
                     className="rounded"
                   />
                 </Link>
               </div>
               <div className="flex flex-col items-left justify-center cursor-default bg-red">
                 <div className="pl-4 bg-background">
-                  <span className="text-muted-foreground">{article.brand}</span>
+                  <span className="text-muted-foreground">{article.category_name}</span>
                   <br />
                   <span className="text-forground hover:text-ring cursor-pointer ">
-                    {article.name}
+                    {article.title}
                   </span>
                   <br />
-                  <span className="text-primary">{article.price}</span>
                 </div>
               </div>
+                  <span className="text-primary">{article.price} Dh</span>
             </div>
-
-            {/* <div className="flex w-[15%] items-center relative">
-            <Input className='ml-2 w-16' type="number" min="1" defaultValue={Object.values(articleCookie?.[article.id] ?? '1')} onChange={(event) => handleQuantityChange(event, article.id)} />
-            </div>
-
-            <div className="flex w-[15%] items-center relative">
-              <span className="ml-4 text-primary"> {article.price * (parseInt(articleCookie?.[article.id] ? Object.values(articleCookie[article.id]).toString() : '1') || 1)}</span>
-            </div> */}
           </div>
         ))}
       </div>

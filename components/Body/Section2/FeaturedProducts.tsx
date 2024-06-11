@@ -56,7 +56,7 @@ export default function FeaturedProducts() {
           Best Products
         </h2>
         <Link
-          href="/link"
+          href="/products/all"
           className="cursor-pointer font-semibold h-full justify-center items-center text-cyan-400 text-md py-6"
         >
           See more
