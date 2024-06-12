@@ -31,10 +31,11 @@ export default function RightSide(props: any) {
         throw new Error("Failed to add product to cart");
       }
       // Optionally handle success response
-      dispatch(cartUpdate());
       console.log("Product added to cart successfully");
     } catch (error) {
       console.error("Error adding product to cart:", error);
+    } finally {
+      dispatch(cartUpdate());
     }
   };
 

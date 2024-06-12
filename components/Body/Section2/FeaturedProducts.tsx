@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -93,11 +93,13 @@ export default function FeaturedProducts() {
                 {product.title}
               </h4>
               <div className="flex mt-6 gap-4 items-center mb-2">
-                <p className="text-cyan-400 text-semibold">{product.price} dh</p>
-              </div>
-              <div className="text-green-600 font-semibold text-sm flex items-center gap-2">
-                <GoDotFill />
-                <p>In stock</p>
+                <p className="text-cyan-400 text-semibold">
+                  {product.price} dh
+                </p>
+                <div className="text-green-600 font-semibold text-sm flex items-center gap-2">
+                  <GoDotFill />
+                  <p>In stock</p>
+                </div>
               </div>
             </div>
           </Link>

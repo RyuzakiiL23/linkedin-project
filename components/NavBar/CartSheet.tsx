@@ -75,6 +75,7 @@ function CartSheet() {
           },
         });
         if (!response.ok) {
+          setArticles([]);
           throw new Error("Failed to fetch articles");
         }
         const data: Article[] = await response.json();

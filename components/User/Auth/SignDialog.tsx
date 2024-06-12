@@ -4,8 +4,11 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Sign } from "./Sign";
 import Cookies from "universal-cookie";
 import { useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { cartUpdate } from "@/lib/features/CartState/CartSlice";
 
 export function SignDialog() {
+  const dispatch = useDispatch();
   const cookies = useMemo(() => new Cookies(null, { path: "/" }), []);
   const [session, setSession] = useState<string | null>(null);
   const [dialog, setDialog] = useState(false);
@@ -23,7 +26,7 @@ export function SignDialog() {
         method: "POST",
         credentials: "include",
         headers: {
-          'Authorization': `Bearer ${cookies.get("session")}`,
+          Authorization: `Bearer ${cookies.get("session")}`,
         },
       });
       console.log(res);
@@ -34,20 +37,22 @@ export function SignDialog() {
       setLogoutButton(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(cartUpdate());
     }
   };
 
   if (session === null) {
     // While checking the auth status, return null or a loading state
-    return(
-              <Dialog open={dialog} onOpenChange={setDialog}>
-          <DialogTrigger asChild>
-            <Button variant="outline">loading</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[465px]">
-            <Sign setLogoutButton={setLogoutButton} setDialog={setDialog} />
-          </DialogContent>
-        </Dialog>
+    return (
+      <Dialog open={dialog} onOpenChange={setDialog}>
+        <DialogTrigger asChild>
+          <Button variant="outline">loading</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[465px]">
+          <Sign setLogoutButton={setLogoutButton} setDialog={setDialog} />
+        </DialogContent>
+      </Dialog>
     );
   }
 

@@ -11,10 +11,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {  useState } from "react";
+import { useState } from "react";
 import Cookies from "universal-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { cartUpdate } from "@/lib/features/CartState/CartSlice";
 
 export function Sign(props: any) {
+  const dispatch = useDispatch();
   const cookies = new Cookies(null, { path: "/" });
   const [registerInfo, setRegisterInfo] = useState({
     name: "",
@@ -50,6 +53,7 @@ export function Sign(props: any) {
         props.setDialog(false);
         props.setLogoutButton(true);
         cookies.set("user", data.role);
+        dispatch(cartUpdate());
       }
     } catch (error) {
       console.log(error);
@@ -71,11 +75,12 @@ export function Sign(props: any) {
       if (data.error) {
         throw new Error(data.error);
       }
-     if (data.access_token) {
+      if (data.access_token) {
         cookies.set("session", data.access_token);
         cookies.set("user", data.role);
         props.setDialog(false);
         props.setLogoutButton(true);
+        dispatch(cartUpdate());
       }
     } catch (error) {
       console.log(error);

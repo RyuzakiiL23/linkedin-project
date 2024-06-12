@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -70,7 +70,9 @@ const Collections: React.FC = () => {
                 <h4 className="font-bold text-xl pb-2 text-muted">
                   {collection.name}
                 </h4>
-                <p className="text-muted relative z-40">{collection.description}</p>
+                <p className="text-muted relative z-40">
+                  {collection.description}
+                </p>
                 <Link href={`/categories/${collection.id}`}>
                   <button className="mt-4 bg-primary text-white py-2 font-semibold px-4">
                     voir plus
@@ -88,7 +90,8 @@ const Collections: React.FC = () => {
             </div>
             <div className="flex w-full m-2 h-full relative">
               {products
-                .filter((product) => product.category_id === collection.id).slice(0, 5)
+                .filter((product) => product.category_id === collection.id)
+                .slice(0, 5)
                 .map((product) => (
                   <Link
                     href={`/products/${product.id}`}
@@ -111,10 +114,14 @@ const Collections: React.FC = () => {
                       <h4 className="font-semibold text-sm py-2 h-10 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                         {product.title}
                       </h4>
-                      <div className="flex mt-6 gap-4 items-center mb-2">
+                      <div className="flex mt-6 gap-2 items-center mb-2">
                         <p className="text-cyan-400 text-semibold">
-                          {product.price}
+                          {product.price} dh
                         </p>
+                        <div className="text-green-600 font-semibold text-sm flex items-center gap-2">
+                          <GoDotFill />
+                          <p>In stock</p>
+                        </div>
                       </div>
                     </div>
                   </Link>
