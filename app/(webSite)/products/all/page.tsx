@@ -87,12 +87,11 @@ function AllProducts() {
                 </p>
               </div>
               <div
-                className={`${
-                  product.availability ? "text-green-600" : "text-destructive"
-                } font-semibold text-sm flex items-center gap-2 `}
+                className={`text-green-600
+                 font-semibold text-sm flex items-center gap-2 `}
               >
                 <GoDotFill />
-                <p>{product.availability ? "in stock" : "out of stock"}</p>
+                <p>in stock</p>
               </div>
             </div>
           </Link>

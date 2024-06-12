@@ -5,8 +5,11 @@ import React from "react";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { cartUpdate } from "@/lib/features/CartState/CartSlice";
 
 export default function RightSide(props: any) {
+  const dispatch = useDispatch();
   const cookies = new Cookies(null, { path: "/" });
   const [count, setCount] = React.useState(1);
   const router = useRouter();
@@ -20,7 +23,7 @@ export default function RightSide(props: any) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${session}`,
+          Authorization: `Bearer ${session}`,
         },
         body: JSON.stringify({ product_id: product.id, quantity: count }),
       });
@@ -28,6 +31,7 @@ export default function RightSide(props: any) {
         throw new Error("Failed to add product to cart");
       }
       // Optionally handle success response
+      dispatch(cartUpdate());
       console.log("Product added to cart successfully");
     } catch (error) {
       console.error("Error adding product to cart:", error);

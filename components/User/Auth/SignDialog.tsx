@@ -39,7 +39,16 @@ export function SignDialog() {
 
   if (session === null) {
     // While checking the auth status, return null or a loading state
-    return null;
+    return(
+              <Dialog open={dialog} onOpenChange={setDialog}>
+          <DialogTrigger asChild>
+            <Button variant="outline">loading</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[465px]">
+            <Sign setLogoutButton={setLogoutButton} setDialog={setDialog} />
+          </DialogContent>
+        </Dialog>
+    );
   }
 
   return (

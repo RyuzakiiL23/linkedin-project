@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
+  FaCartArrowDown,
   FaCartShopping,
   FaMoneyCheckDollar,
   FaRegTrashCan,
@@ -23,18 +24,23 @@ interface Article {
   discount?: string;
   newPrice?: string;
 }
+import { RootState } from "@/lib/store";
+import { cartUpdate } from "@/lib/features/CartState/CartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function CartSheet() {
+  const dispatch = useDispatch();
   const cookies = new Cookies();
   const cart = cookies.get("cart") || [];
   const [sheetOpen, setSheetOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const session = cookies.get("session");
+  const cartState = useSelector((state: RootState) => state.cart.cart);
+  const [cartus, setCartus] = useState(true);
 
   const handleRemoveArticle = async (id: number) => {
-    console.log('id', id)
+    console.log("id", id);
     try {
       const response = await fetch(
         `${process.env.baseURL}/api/cart/${id.toString()}`,
@@ -46,10 +52,12 @@ function CartSheet() {
           },
         }
       );
-      console.log(response)
+      console.log(response);
       if (!response.ok) {
         throw new Error("Failed to remove article");
       }
+      setCartus(!cart);
+      // dispatch(cartUpdate());
     } catch (error) {
       console.error(error);
     }
@@ -71,24 +79,15 @@ function CartSheet() {
         }
         const data: Article[] = await response.json();
         setArticles(data);
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
         setError((error as Error).message);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
     fetchArticles();
-  }, [session]);
-
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div></div>;
-  }
+  }, [session, cartState, cartus]);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -109,6 +108,11 @@ function CartSheet() {
           </div>
           <ScrollArea className="flex flex-col h-full relative">
             {articles.length === 0 ? (
+              <div className="flex justify-center items-center text-xl text-muted-foreground gap-4">
+                <FaCartArrowDown />
+                <p className="text-center ">Your cart is empty </p>
+              </div>
+            ) : articles.length === 0 ? (
               <div>empty cart</div>
             ) : (
               articles.map((article) => (
