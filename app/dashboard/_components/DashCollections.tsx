@@ -4,7 +4,7 @@ import CategoryDialog from "./Collections/CategoryDialog";
 import Cookies from "universal-cookie";
 import Image from "next/image";
 
-export default function DashCollections() {
+export default function DashCollections(props: any) {
   const cookies = new Cookies(null, { path: "/" });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [collections, setCollections] = useState([]);
@@ -29,7 +29,7 @@ export default function DashCollections() {
       }
     };
     fetchCategories();
-  }, [deleteState, dialogOpen]);
+  }, [deleteState, props.collectionDialogOpen, dialogOpen]);
 
   return (
     <div className="h-full m-8">

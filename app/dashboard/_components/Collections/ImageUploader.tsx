@@ -40,6 +40,7 @@ function ImageUploader(props: any) {
     description: "",
     category_id: "",
   });
+  const [uploadedSuccess, setUploadedSuccess] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,7 +70,6 @@ function ImageUploader(props: any) {
       });
     }
   };
-
 
   const handlePrincipalFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -131,11 +131,17 @@ function ImageUploader(props: any) {
       );
 
       if (!productResponse.ok) {
+        setWaiting(false);
         throw new Error("Failed to create product");
       }
-
+      if (productResponse.ok) {
+        setUploadedSuccess(true);
+        setTimeout(() => {
+          setUploadedSuccess(false);
+          props.setDialogOpen(false);
+        }, 1000);
+      }
       setWaiting(false);
-      props.setDialogOpen(false);
       console.log("Product created:", productResponse.ok);
       const productData = await productResponse.json();
       return productData;
@@ -154,10 +160,10 @@ function ImageUploader(props: any) {
     setProductDetails({ ...productDetails, [name]: value });
   };
 
-  const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProductDetails({ ...productDetails, [name]: value });
-  };
+  // const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setProductDetails({ ...productDetails, [name]: value });
+  // };
 
   const handleCancelPrincipal = () => {
     setSelectedFilePrincipal(null);
@@ -178,11 +184,22 @@ function ImageUploader(props: any) {
         <div
           className={`${
             waiting
-              ? "absolute h-full w-full bg-background opacity-50 z-50"
+              ? "absolute flex items-center h-full w-full bg-background opacity-80 z-50"
               : "hidden"
           }`}
         >
           <p className="text-4xl w-full text-center">Adding ...</p>
+        </div>
+        <div
+          className={`${
+            uploadedSuccess
+              ? "absolute flex items-center h-full w-full bg-green-400 opacity-80 z-50"
+              : "hidden"
+          }`}
+        >
+          <p className="text-4xl w-full text-center">
+            Collection added successully
+          </p>
         </div>
         <section className="flex relative w-[50%] mt-4">
           <div className="flex flex-col gap-2 relative items-center w-full">
@@ -220,7 +237,6 @@ function ImageUploader(props: any) {
                 </div>
               )}
             </div>
-
           </div>
         </section>
         <div className="p-4 flex w-[50%] relative">

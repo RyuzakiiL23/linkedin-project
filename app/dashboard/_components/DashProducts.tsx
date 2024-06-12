@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductDialog from "./Products/ProductDialog";
 import Image from "next/image";
 
-export default function DashProducts() {
+export default function DashProducts(props: any) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [products, setProducts] = useState([]);
 
@@ -22,7 +22,7 @@ export default function DashProducts() {
       }
     };
     getProduct();
-  }, [dialogOpen]);
+  }, [dialogOpen, props.productDialogOpen]);
 
   return (
     <div className="h-full m-8  ">

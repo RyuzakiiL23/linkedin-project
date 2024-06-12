@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import DashProducts from "./DashProducts";
 import DashCollections from "./DashCollections";
 import CreateCategory from "./Collections/CreateCategory";
@@ -10,6 +10,9 @@ import AddProductDialog from "./Products/AddProductDialog";
 export default function DashboadContainer() {
   const [active, setActive] = useState("collections");
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+  }, [dialogOpen]);
 
   return (
     <div className="h-full">
@@ -37,12 +40,12 @@ export default function DashboadContainer() {
       <div>
         {active === "collections" ? (
           <div className="h-full ">
-            <DashCollections />
+            <DashCollections collectionDialogOpen={dialogOpen} />
             <CreateCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
           </div>
         ) : (
           <div className="h-full  ">
-            <DashProducts/>
+            <DashProducts productDialogOpen={dialogOpen}/>
             <AddProductDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
           </div>
         )}
