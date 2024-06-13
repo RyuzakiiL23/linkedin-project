@@ -49,7 +49,7 @@ export default function BestProducts() {
         Best Categories
       </h2>
       <div className="flex gap-20 justify-between">
-        {categories.map((category) => (
+        {categories.slice(0, 3).map((category) => (
           <div
             key={category.id}
             className="w-[400px] h-[270px] p-8 bg-border relative overflow-hidden group cursor-default"

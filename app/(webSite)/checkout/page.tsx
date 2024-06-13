@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Cookies from "universal-cookie";
 import { FaCartArrowDown } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 interface Article {
   id: number;
   title: string;
@@ -35,8 +38,10 @@ export default function Checkout() {
   });
   const [articles, setArticles] = useState<Article[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [showSuccess, setShowSuccess] = useState(false);
   const cookies = new Cookies();
   const session = cookies.get("session");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -45,13 +50,15 @@ export default function Checkout() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session}`,
+            "Authorization": `Bearer ${session}`,
           },
         });
+        console.log(response);
         if (!response.ok) {
           throw new Error("Failed to fetch cart data");
         }
         const data = await response.json();
+        console.log(data)
         setArticles(data);
         calculateTotalPrice(data);
       } catch (error) {
@@ -72,15 +79,60 @@ export default function Checkout() {
     setCltDetails({ ...cltDetails, [name]: value });
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const orderData = {
+      full_name: `${cltDetails.Prénom} ${cltDetails.Nom}`,
+      product_id: articles.map((article) => article.id),
+      street: cltDetails.Adresse,
+      city: cltDetails.Ville,
+      province: "Province", // You can add this field to the form if necessary
+      country: "Country",   // You can add this field to the form if necessary
+      phone: cltDetails.Téléphone,
+      zip_code: cltDetails.Code_postal,
+    };
+
+    try {
+      const response = await fetch(`${process.env.baseURL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        await fetch(`${process.env.baseURL}/api/cart/clear`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+          },
+        });
+        setTimeout(() => {
+          setShowSuccess(false);
+          router.push("/");
+        }, 1000);
+      } else {
+        console.error("Failed to submit order");
+      }
+    } catch (error) {
+      console.error("Error submitting order:", error);
+    }
+  };
+
   return (
     <div>
       {articles.length === 0 ? (
         <div className="flex justify-center min-h-[70vh] items-center text-4xl text-muted-foreground gap-4">
           <FaCartArrowDown />
-          <p className="text-center ">Your cart is empty </p>
+          <p className="text-center">Your cart is empty </p>
         </div>
       ) : (
-        <div className="flex relative min-h-[60vh] mt-10">
+        <form onSubmit={handleSubmit} className="flex relative min-h-[60vh] mt-10">
           <div className="w-[60%] mr-4">
             <div className="flex flex-col gap-4 ml-20 mr-10">
               <div>
@@ -108,7 +160,7 @@ export default function Checkout() {
               </div>
               <Input
                 placeholder="Adresse"
-                type="address"
+                type="text"
                 id="Adresse"
                 name="Adresse"
                 value={cltDetails.Adresse}
@@ -149,6 +201,12 @@ export default function Checkout() {
               <span className="p-4">Total</span>
               <span className="p-4 text-primary ">{totalPrice} Dh</span>
             </div>
+            <div className="flex justify-start px-20">
+              <Button type="submit" className="">
+                Submit Order
+              </Button>
+            </div>
+            {showSuccess && <div className="success-message">Success</div>}
           </div>
           <div className="w-[40%] mr-10">
             <div className="flex border-b relative">
@@ -194,7 +252,7 @@ export default function Checkout() {
               </div>
             ))}
           </div>
-        </div>
+        </form>
       )}
     </div>
   );

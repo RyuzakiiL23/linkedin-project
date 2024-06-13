@@ -151,7 +151,7 @@ function ImageUploader(props: any) {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session}`,
+            "Authorization": `Bearer ${session}`,
           },
           body: JSON.stringify(req),
         }

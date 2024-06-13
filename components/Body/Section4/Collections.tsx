@@ -107,14 +107,14 @@ const Collections: React.FC = () => {
                         className=" absolute cursor-pointer"
                       />
                     </div>
-                    <div className="p-4 h-full">
+                    <div className=" h-full">
                       <h3 className="text-xs font-md text-muted-foreground hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                         {product.category_name}
                       </h3>
                       <h4 className="font-semibold text-sm py-2 h-10 text-primary hover:text-cyan-400 transition duration-200 ease-out cursor-pointer">
                         {product.title}
                       </h4>
-                      <div className="flex mt-6 gap-2 items-center mb-2">
+                      <div className="flex mt-6 gap-2 items-center mb-2 ">
                         <p className="text-cyan-400 text-semibold">
                           {product.price} dh
                         </p>

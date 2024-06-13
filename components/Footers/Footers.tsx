@@ -1,15 +1,29 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Socila from "./Socila";
+import Link from "next/link";
 
 export default function Footers() {
-  const collections = [
-    { name: "Collection 1" },
-    { name: "Collection 2" },
-    { name: "Collection 3" },
-    { name: "Collection 4" },
-    { name: "Collection 5" },
-    { name: "Collection 6" },
-  ];
+  const [collections, setCollections] = useState<any>([]);
+  useEffect(() => {
+    const storeCategories = async () => {
+      const res = await fetch(`${process.env.baseURL}/api/categories`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res && typeof res === "object" && "message" in res) {
+        setCollections([{}]);
+      } else {
+        const data = await res.json();
+        setCollections(data);
+      }
+    };
+    storeCategories();
+  }, []);
+
   const informations = [
     { name: "Informations 1" },
     { name: "Informations 2" },
@@ -56,7 +70,10 @@ export default function Footers() {
           <h1 className="font-bold text-primary mb-4">Informations</h1>
           <ul>
             {informations.map((information) => (
-              <li key={information.name} className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2">
+              <li
+                key={information.name}
+                className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2"
+              >
                 {information.name}
               </li>
             ))}
@@ -66,10 +83,15 @@ export default function Footers() {
         {/* Popular collections */}
         <div className="w-[15%] p-4">
           <h1 className="font-bold text-primary mb-4">Popular Collections</h1>
-          <ul>
-            {collections.map((collection) => (
-              <li key={collection.name} className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2">
-                {collection.name}
+          <ul className="flex flex-col gap-2 ">
+            {collections.map((collection: any) => (
+              <li key={collection.name}>
+                <Link
+                  href={`/categories/${collection.id}`}
+                  className="text-muted-foreground cursor-pointer hover:text-cyan-400 ease-out duration-200 my-2"
+                >
+                  {collection.name}
+                </Link>
               </li>
             ))}
           </ul>
