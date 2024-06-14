@@ -66,7 +66,7 @@ const OrdersTable: React.FC = () => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [session]); // Include 'session' in the dependency array
 
   const toggleUserAccordion = (userId: number) => {
     setExpandedUsers((prev) => ({

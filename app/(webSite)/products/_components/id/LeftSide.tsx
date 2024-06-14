@@ -17,7 +17,7 @@ export default function LeftSide(props: any) {
       </div>
 
       <div className="border bg-background relative p-8">
-        <h1 className="text-primary text-2xl font-bold">Livraison et Retoursk</h1>
+        <h1 className="text-primary text-2xl font-bold">Delivery details</h1>
         <p className="text-muted-foreground text-sm font-semibold">
           Dans quelles villes faites-vous la livraison ? Nous livrons partout au
           Maroc ( Marrakech, Casablanca, Rabat, Sale, Fès, Tanger, Tétouan,beni

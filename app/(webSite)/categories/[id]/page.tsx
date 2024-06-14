@@ -75,7 +75,7 @@ const Page: React.FC<PageProps> = ({ params }: { params: { id: string } }) => {
       <div className="flex gap-2 flex-wrap">
         {products.map((product) => (
           <Link
-            href={`${process.env.baseURL}/api/categories/${product.id}/products/`}
+            href={`/products/${product.id}`}
             key={product.id}
             className="my-8 h-full w-60 p-2 relative bg-card border overflow-hidden group cursor-default"
           >

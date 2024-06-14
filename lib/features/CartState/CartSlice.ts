@@ -14,7 +14,7 @@ export const CartSlice = createSlice({
   initialState,
   reducers: {
     cartUpdate: (state) => {
-      state.cart = !state;
+      state.cart = state.cart === true ? false : true;
     },
   },
 });
