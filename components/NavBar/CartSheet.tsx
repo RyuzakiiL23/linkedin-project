@@ -88,7 +88,7 @@ function CartSheet() {
     };
 
     fetchArticles();
-  }, [session, cartState, cartus, cart]);
+  }, [session, cartState, cartus]);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
