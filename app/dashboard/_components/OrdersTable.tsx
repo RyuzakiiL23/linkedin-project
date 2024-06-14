@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { OrderAccordion } from "./Orders/OrderAccordion";
 
 export default function OrdersTable() {
   const [orders, setOrders] = useState<any>([]);
@@ -23,6 +24,7 @@ export default function OrdersTable() {
           throw new Error("Failed to fetch orders");
         }
         const data = await res.json();
+        console.log(data)
         setOrders(data);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -35,13 +37,13 @@ export default function OrdersTable() {
   return (
     <div className="border rounded m-4">
       <div className="flex relative items-center justify-between border-b">
-        <div className="p-2 w-[20%]">Transaction ID</div>
-        <div className="p-2 w-[20%]">Total Price</div>
-        <div className="p-2 w-[30%]">Created At</div>
-        <div className="p-2 w-[20%]">Product ID</div>
-        <div className="p-2 w-[10%]">User ID</div>
+        <div className="p-2 w-[30%]">User</div>
+        <div className="p-2 w-[30%]">Orders</div>
+        <div className="p-2 w-[30%]">Articles</div>
+        <div className="p-2 w-[10%]">Address</div>
+        {/* <div className="p-2 w-[20%]">Product ID</div> */}
       </div>
-      {orders.map((order: any) => (
+      {/* {orders.map((order: any) => (
         <div
           key={order.id}
           className="flex relative items-center justify-between h-16"
@@ -54,7 +56,8 @@ export default function OrdersTable() {
           <div className="p-2 w-[20%]">{order.product_id}</div>
           <div className="p-2 w-[10%]">{order.user_id}</div>
         </div>
-      ))}
+      ))} */}
+      <OrderAccordion orders={orders}/>
     </div>
   );
 }
