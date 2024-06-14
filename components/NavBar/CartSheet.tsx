@@ -56,7 +56,7 @@ function CartSheet() {
       if (!response.ok) {
         throw new Error("Failed to remove article");
       }
-      setCartus(!cart);
+      setCartus(!cartus);
       // dispatch(cartUpdate());
     } catch (error) {
       console.error(error);
@@ -88,7 +88,7 @@ function CartSheet() {
     };
 
     fetchArticles();
-  }, [session, cartState, cartus]);
+  }, [session, cartState, cartus, cart]);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
