@@ -16,7 +16,6 @@ export default function DashProducts(props: any) {
         });
         const data = await response.json();
         setProducts(data);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
