@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Cookies from "universal-cookie";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { AddressDialog } from "./Orders/AddressDialog";
 
 interface Address {
   id: number;
@@ -131,7 +132,7 @@ const OrdersTable: React.FC = () => {
         <div className="w-[20%] font-bold">Total Price</div>
         <div className="w-[20%] font-bold">Address</div>
       </div>
-      <div className="h-[60vh] overflow-auto">
+      <div className="h-[72vh] overflow-auto">
         {Object.entries(groupedByUser).map(([userId, user]) => {
           const totalOrders = Object.keys(user.transactions).length;
           const totalArticles = Object.values(user.transactions).reduce(
@@ -160,11 +161,12 @@ const OrdersTable: React.FC = () => {
                 <div className="w-[20%]">{totalArticles}</div>
                 <div className="w-[20%]">{totalPrice} dh</div>
                 <div className="w-[20%]">
-                  <button
+                  <AddressDialog address={address} />
+                  {/* <button
                     onClick={() => alert(JSON.stringify(address, null, 2))}
                   >
                     Show Address
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div
