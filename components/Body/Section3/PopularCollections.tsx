@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -51,22 +51,24 @@ export default function PopularCollections() {
       </h2>
       <div className="flex gap-4 justify-around">
         {collections.slice(0, 6).map((collection) => (
-          <Link href={`/categories/${collection.id}`} className="group cursor-pointer"  key={collection.name}>
+          <Link
+            href={`/categories/${collection.id}`}
+            className="group cursor-pointer"
+            key={collection.name}
+          >
             <div className="w-48 h-48 p-8 bg-border rounded-full cursor-pointer relative flex items-center justify-center overflow-hidden">
               <Image
                 src={collection.image}
                 alt={collection.name}
-                width="500"
+                width={500}
                 height={200}
-                style={{ height: "auto" }}
+                style={{ height: "auto", width: "auto" }}
                 className="absolute group-hover:p-2 transition-all duration-500 ease-out"
               />
             </div>
             <div className="flex text-primary group-hover:text-cyan-400 items-center gap-2 mt-2 justify-center transition-all duration-300 ease-out relative">
-              <h3 className="text-lg font-bold">
-                {collection.name}
-              </h3>
-              <FaArrowRight className="absolute opacity-0 group-hover:opacity-100 right-0 duration-300 ease-out group-hover:right-5"/>
+              <h3 className="text-lg font-bold">{collection.name}</h3>
+              <FaArrowRight className="absolute opacity-0 group-hover:opacity-100 right-0 duration-300 ease-out group-hover:right-5" />
             </div>
           </Link>
         ))}

@@ -66,9 +66,9 @@ export default function BestProducts() {
             <Image
               src={category.image}
               alt={category.name}
-              width="240"
+              width={240}
               height={68}
-              style={{ height: "auto" }}
+                style={{ height: "auto", width: "auto" }}
               className="absolute bottom-[-40px] right-[-20px] group-hover:bottom-[-20px] z-30 transition-all duration-500 ease-out"
             />
           </div>

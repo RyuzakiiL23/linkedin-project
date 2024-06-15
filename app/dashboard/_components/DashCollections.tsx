@@ -53,6 +53,7 @@ export default function DashCollections(props: any) {
                   width="50"
                   height="50"
                   alt={item.name}
+                  style={{ width: "auto", height: "auto" }}
                 />
               </div>
               <div className="p-2 w-[20%]">{item.name}</div>

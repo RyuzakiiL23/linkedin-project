@@ -81,9 +81,9 @@ const Collections: React.FC = () => {
                 <Image
                   src={collection.image}
                   alt={collection.name}
-                  width="240"
+                  width={240}
                   height={68}
-                  style={{ height: "auto" }}
+                  style={{ height: "auto", width: "auto" }}
                   className="absolute z-30 bottom-[-40px] right-[-20px] group-hover:bottom-[-20px] transition-all duration-500 ease-out"
                 />
               </div>
@@ -104,6 +104,7 @@ const Collections: React.FC = () => {
                         alt={product.title}
                         width={200}
                         height={200}
+                        style={{ height: "auto", width: "auto" }}
                         className=" absolute cursor-pointer"
                       />
                     </div>

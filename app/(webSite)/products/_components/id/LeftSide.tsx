@@ -6,7 +6,9 @@ export default function LeftSide(props: any) {
   return (
     <div className="w-1/2 flex flex-col gap-8">
       <div className="border bg-background relative p-8">
-        <Image src={product.image} width={500} height={500} alt="product" />
+        {product.image && (
+          <Image src={product.image} width={500} height={500} alt="product" />
+        )}
       </div>
 
       <div className="border bg-background relative p-8">

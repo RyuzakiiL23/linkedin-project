@@ -53,12 +53,10 @@ export default function Checkout() {
             "Authorization": `Bearer ${session}`,
           },
         });
-        console.log(response);
         if (!response.ok) {
           throw new Error("Failed to fetch cart data");
         }
         const data = await response.json();
-        console.log(data)
         setArticles(data);
         calculateTotalPrice(data);
       } catch (error) {

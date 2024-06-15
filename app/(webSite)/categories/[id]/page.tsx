@@ -38,7 +38,6 @@ const Page: React.FC<PageProps> = ({ params }: { params: { id: string } }) => {
           throw new Error("Failed to fetch products");
         }
         const data = await response.json();
-        console.log(data)
         
         // Check if data is an array
         if (Array.isArray(data)) {
@@ -90,6 +89,7 @@ const Page: React.FC<PageProps> = ({ params }: { params: { id: string } }) => {
                 alt={product.title}
                 width={200}
                 height={200}
+                style={{width : "auto", height: "auto"}}
                 className="group-hover:opacity-100 opacity-0 transition duration-300 ease-out absolute cursor-pointer"
               />
               <Image
@@ -97,6 +97,7 @@ const Page: React.FC<PageProps> = ({ params }: { params: { id: string } }) => {
                 alt={product.title}
                 width={200}
                 height={200}
+                style={{width : "auto", height: "auto"}}
                 className="group-hover:opacity-0 transition duration-300 ease-out absolute cursor-pointer"
               />
             </div>

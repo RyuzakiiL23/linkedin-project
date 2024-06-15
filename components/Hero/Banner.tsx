@@ -7,7 +7,10 @@ export default function Banner() {
       <Image
         src={`/placeholder-image.webp`}
         alt="image"
-        fill={true}
+        // width={2000}
+        // height={300}
+        fill
+        style={{objectFit: 'cover'}}
         className="absolute z-1"
       />
     </div>

@@ -64,6 +64,7 @@ function AllProducts() {
                 alt={product.title}
                 width={200}
                 height={200}
+                style={{width : "auto", height: "auto"}}
                 className="group-hover:opacity-100 opacity-0 transition duration-300 ease-out absolute cursor-pointer"
               />
               <Image
@@ -71,6 +72,7 @@ function AllProducts() {
                 alt={product.title}
                 width={200}
                 height={200}
+                style={{width : "auto", height: "auto"}}
                 className="group-hover:opacity-0 transition duration-300 ease-out absolute cursor-pointer"
               />
             </div>

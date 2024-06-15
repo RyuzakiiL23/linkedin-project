@@ -75,6 +75,7 @@ export default function FeaturedProducts() {
                 alt={product.title}
                 width={500}
                 height={500}
+                style={{ height: "auto", width: "auto" }}
                 className="absolute group-hover:opacity-100 opacity-0 transition duration-300 ease-out cursor-pointer"
               />
               <Image
@@ -82,6 +83,7 @@ export default function FeaturedProducts() {
                 alt={product.title}
                 width={500}
                 height={500}
+                style={{ height: "auto", width: "auto" }}
                 className="absolute group-hover:opacity-0 transition duration-300 ease-out cursor-pointer"
               />
             </div>

@@ -24,7 +24,8 @@ export default function Collaborations() {
               <Image
                 src={collection.image}
                 alt={collection.name}
-                fill={true}
+                height={60}
+                width={100}
                 style={{objectFit: "contain"}}
                 className="p-4"
               />

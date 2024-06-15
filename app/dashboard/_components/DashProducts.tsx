@@ -44,7 +44,8 @@ export default function DashProducts(props: any) {
                   src={item.image ? item.image : item.name}
                   width={50}
                   height={50}
-                  alt={item.name}
+                  style={{ width: "auto", height: "auto" }}
+                  alt={item.name ? item.name : 'image'}
                 />
               </div>
               <div className="p-2 w-[20%]">{item.title}</div>
